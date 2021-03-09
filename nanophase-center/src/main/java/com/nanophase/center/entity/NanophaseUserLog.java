@@ -42,10 +42,19 @@ public class NanophaseUserLog implements Serializable {
      */
     private String nanophaseUserEamil;
 
+    /**
+     * 创建者
+     */
     private String createUser;
 
+    /**
+     * 创建者名称
+     */
     private String createUserName;
 
+    /**
+     * 记录创建日期 手动赋值
+     */
     private LocalDateTime createDate;
 
 
