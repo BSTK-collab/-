@@ -3,15 +3,19 @@ package com.nanophase.center.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nanophase.center.entity.NanophaseUser;
+import com.nanophase.center.entity.NanophaseUserLog;
 import com.nanophase.center.mapper.NanophaseUserMapper;
+import com.nanophase.center.service.INanophaseUserLogService;
 import com.nanophase.center.service.INanophaseUserService;
 import com.nanophase.common.DTO.NanophaseUserDTO;
 import com.nanophase.common.handler.NanophaseException;
 import com.nanophase.common.util.R;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -24,6 +28,9 @@ import java.util.List;
  */
 @Service
 public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, NanophaseUser> implements INanophaseUserService {
+
+    @Autowired
+    private INanophaseUserLogService iNanophaseUserLogService;
 
     /**
      * 用户注册
@@ -55,7 +62,21 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
      */
     @Override
     public R login(NanophaseUserDTO nanophaseUserDTO) {
-        verifyLoginParam(nanophaseUserDTO);
+        NanophaseUser nanophaseUser = verifyLoginParam(nanophaseUserDTO);
+        try {
+            // 保存用户登录记录
+            NanophaseUserLog nanophaseUserLog = new NanophaseUserLog();
+            nanophaseUserLog.setNanophaseUserId(nanophaseUser.getUserId());
+            nanophaseUserLog.setNanophaseUserEamil(nanophaseUser.getUserEmail());
+            nanophaseUserLog.setCreateDate(LocalDateTime.now());
+            boolean save = iNanophaseUserLogService.save(nanophaseUserLog);
+            if (!save) {
+                // 保存用户登录记录失败
+                throw new NanophaseException("保存用户登录日志异常");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return R.success();
     }
 
@@ -64,7 +85,7 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
      *
      * @param nanophaseUserDTO
      */
-    private void verifyLoginParam(NanophaseUserDTO nanophaseUserDTO) {
+    private NanophaseUser verifyLoginParam(NanophaseUserDTO nanophaseUserDTO) {
         if (StringUtils.isBlank(nanophaseUserDTO.getEmail())) {
             throw new NanophaseException("Email cannot be empty");
         }
@@ -83,6 +104,7 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
             // 用户名或密码错误
             throw new NanophaseException("Email or password wrong");
         }
+        return nanophaseUser;
     }
 
     /**
