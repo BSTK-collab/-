@@ -2,6 +2,7 @@ package com.nanophase.center.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.nanophase.center.entity.NanophaseUser;
+import com.nanophase.common.DTO.NanophaseUserDTO;
 import com.nanophase.common.util.R;
 
 /**
@@ -21,4 +22,12 @@ public interface INanophaseUserService extends IService<NanophaseUser> {
      * @return R
      */
     R register(NanophaseUser nanophaseUser);
+
+    /**
+     * 用户登录
+     *
+     * @param nanophaseUserDTO
+     * @return R
+     */
+    R login(NanophaseUserDTO nanophaseUserDTO);
 }

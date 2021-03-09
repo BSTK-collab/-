@@ -2,6 +2,8 @@ package com.nanophase.center.controller;
 
 import com.nanophase.center.entity.NanophaseUser;
 import com.nanophase.center.service.INanophaseUserService;
+import com.nanophase.common.DTO.NanophaseUserDTO;
+import com.nanophase.common.annotation.ReadDB;
 import com.nanophase.common.annotation.WriteDB;
 import com.nanophase.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +37,17 @@ public class NanophaseUserController {
     @PostMapping("/register")
     public R register(@RequestBody NanophaseUser nanophaseUser) {
         return iNanophaseUserService.register(nanophaseUser);
+    }
+
+    /**
+     * 用户登录 Token方式
+     *
+     * @param nanophaseUserDTO
+     * @return R
+     */
+    @ReadDB
+    @PostMapping("/login")
+    public R login(@RequestBody NanophaseUserDTO nanophaseUserDTO) {
+        return iNanophaseUserService.login(nanophaseUserDTO);
     }
 }

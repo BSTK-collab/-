@@ -38,7 +38,7 @@ public class DataSourceAspect {
 
     @Before(value = "readDB() || writeDB()")
     public void before(JoinPoint joinPoint) {
-        LOGGER.info("绑定数据源");
+//        LOGGER.info("绑定数据源");
         Class<?> clazz = joinPoint.getTarget().getClass();
         Signature signature = joinPoint.getSignature();
         String methodName = signature.getName();
