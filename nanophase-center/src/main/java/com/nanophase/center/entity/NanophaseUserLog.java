@@ -56,6 +56,4 @@ public class NanophaseUserLog implements Serializable {
      * 记录创建日期 手动赋值
      */
     private LocalDateTime createDate;
-
-
 }
