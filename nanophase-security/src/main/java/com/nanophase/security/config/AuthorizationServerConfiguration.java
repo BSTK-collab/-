@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -14,6 +13,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+
+import javax.sql.DataSource;
 
 /**
  * @author zhj
@@ -31,6 +32,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private DataSource dataSource;
+
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         // 允许所有人请求令牌
@@ -47,16 +51,18 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.inMemory()
-                // client ID
-                    .withClient("123456")
-                // 加密的密码
-                .secret(passwordEncoder.encode("123456"))
-                // 注册验证方式
-                .authorizedGrantTypes("authorization_code", "password", "refresh_token")
-                .scopes("all")
-                // 跳转链接
-                .redirectUris("http://localhost:10090");
+//        clients.inMemory()
+//                // client ID
+//                .withClient("123456")
+//                // 加密的密码
+//                .secret(passwordEncoder.encode("123456"))
+//                // 注册验证方式
+//                .authorizedGrantTypes("authorization_code", "password", "refresh_token")
+//                .scopes("all")
+//                // 跳转链接
+//                .redirectUris("http://localhost:10090");
+        // 从数据库中读取相应配置
+        clients.jdbc(dataSource);
     }
 
     /**
@@ -67,18 +73,19 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
      */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-       endpoints.tokenStore(new InMemoryTokenStore())
-               .accessTokenConverter(accessTokenConverter())
-               .authenticationManager(authenticationManagerBean)
-               .reuseRefreshTokens(false);
+        endpoints.tokenStore(new InMemoryTokenStore())
+                .accessTokenConverter(accessTokenConverter())
+                .authenticationManager(authenticationManagerBean)
+                .reuseRefreshTokens(false);
     }
 
     /**
      * Jwt转换器
+     *
      * @return
      */
     @Bean
-    public JwtAccessTokenConverter accessTokenConverter(){
+    public JwtAccessTokenConverter accessTokenConverter() {
         JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
         jwtAccessTokenConverter.setSigningKey("mySigningkey");
         return jwtAccessTokenConverter;
