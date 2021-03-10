@@ -33,6 +33,16 @@ SpringCloudSecurity + OAuth2.0 + JWT登录鉴权：
 登录方式：Token令牌
 使用JWT是因为可以自包含Token，不需要服务端持久化Token，携带在请求头上就可以
 JWT-header：由type：jwt（类型）和alg：HS256签名算法组成
+登录（授权认证）是为了安全访问，因为HTTP无状态
+SpringOAuth2.0标准是RFC6749文件，将OAuth解释为：OAuth引入了授权层，用来分离两种不同的角色。......资源所有者同意后，资源所有者可以向客户端办法令牌。
+客户端通过令牌，去请求数据。由于互联网有多种场景，本标准定义了四种授权方式:
+1,授权码(authorization_code)
+2,隐藏式(implicit)
+3,密码式(password)
+4,客户端凭证(client credentials)
+但是不管哪一种方案，第三方在在拿到申请令牌之前，都需要到系统备案，然后会拿到身份的识别编码(client_id,客户端ID)和(client_secret，客户端密钥)
+详情：学习网站：http://www.ruanyifeng.com/blog/2019/04/oauth-grant-types.html
+
 
 
 
