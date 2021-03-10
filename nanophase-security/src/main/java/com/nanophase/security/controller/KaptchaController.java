@@ -24,7 +24,7 @@ public class KaptchaController {
     @Autowired
     private KaptchaConfig kaptchaConfig;
 
-    @GetMapping("/get-kaptcha-image")
+    @GetMapping("/get-image")
     public void getKaptchaImage(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         response.setDateHeader("Expires", 0);
@@ -34,17 +34,18 @@ public class KaptchaController {
         response.setContentType("image/jpeg");
         DefaultKaptcha defaultKaptcha = kaptchaConfig.getDefaultKaptcha();
         String text = defaultKaptcha.createText();
-        session.setAttribute("graph_session_key",text);
+        System.out.println("打印图形验证码 ------------" + text);
+        session.setAttribute("graph_session_key", text);
         BufferedImage image = defaultKaptcha.createImage(text);
         ServletOutputStream outputStream = null;
         try {
             outputStream = response.getOutputStream();
-            ImageIO.write(image,"jpg",outputStream);
+            ImageIO.write(image, "jpg", outputStream);
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("生成图形验证码异常,原因：{}",e.getMessage());
-        }finally {
-            if (null != outputStream){
+            log.error("生成图形验证码异常,原因：{}", e.getMessage());
+        } finally {
+            if (null != outputStream) {
                 try {
                     outputStream.flush();
                     outputStream.close();

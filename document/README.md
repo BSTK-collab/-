@@ -29,4 +29,10 @@ Druid针对oracle和mysql做了特别优化，比如Oracle的PS Cache内存占�
 
 通过Druid提供的SQL Parser可以在JDBC层拦截SQL做相应处理，比如说分库分表、审计等。Druid防御SQL注入攻击的WallFilter就是通过Druid的SQL Parser分析语义实现的 
 
+SpringCloudSecurity + OAuth2.0 + JWT登录鉴权：
+登录方式：Token令牌
+使用JWT是因为可以自包含Token，不需要服务端持久化Token，携带在请求头上就可以
+JWT-header：由type：jwt（类型）和alg：HS256签名算法组成
+
+
 

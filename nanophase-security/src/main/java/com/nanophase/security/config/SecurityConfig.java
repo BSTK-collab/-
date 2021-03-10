@@ -1,10 +1,15 @@
 package com.nanophase.security.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
@@ -22,13 +27,54 @@ import java.io.IOException;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.inMemoryAuthentication()
+                .withUser("admin")
+                // 必须要加密
+                .password(this.passwordEncoder().encode("admin"))
+                .roles("USER");
+    }
+
+    /**
+     * 授权服务器需要用到这个bean
+     *
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    /**
+     * 加密方法交给Spring管理
+     *
+     * @return
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .anyRequest().permitAll()
-                .and().logout().permitAll()
-                .and().csrf().disable().authorizeRequests();
+//        http.authorizeRequests()
+//                .anyRequest().permitAll()
+//                .and().logout().permitAll()
+//                .and().csrf().disable().authorizeRequests();
 
+        http.csrf().disable()
+                .authorizeRequests()
+                // 这个请求不需要校验
+                .antMatchers("/oauth/**")
+                .permitAll()
+                // 所有的请求都需要校验
+                .anyRequest().authenticated()
+                .and()
+                .formLogin().permitAll();
 //        http.authorizeRequests()
 //                .anyRequest()
 //                .authenticated()
