@@ -30,7 +30,7 @@ public class SecurityController {
      *
      * @return
      */
-    @GetMapping
+    @GetMapping("/get")
     @Secured({"ROLE_user"})
     public String hello1() {
         return "hello user";

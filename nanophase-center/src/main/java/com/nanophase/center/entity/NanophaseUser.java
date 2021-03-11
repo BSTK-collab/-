@@ -79,6 +79,11 @@ public class NanophaseUser extends BaseEntity implements Serializable {
     private Boolean userStatus;
 
     /**
+     * 用户类型
+     */
+    private String userType;
+
+    /**
      * 所在区域
      */
     private String userRegion;
