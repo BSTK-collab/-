@@ -32,8 +32,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private DataSource dataSource;
+//    @Autowired
+//    private DataSource dataSource;
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -51,18 +51,18 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-//        clients.inMemory()
-//                // client ID
-//                .withClient("123456")
-//                // 加密的密码
-//                .secret(passwordEncoder.encode("123456"))
-//                // 注册验证方式
-//                .authorizedGrantTypes("authorization_code", "password", "refresh_token")
-//                .scopes("all")
-//                // 跳转链接
-//                .redirectUris("http://localhost:10090");
+        clients.inMemory()
+                // client ID
+                .withClient("123456")
+                // 加密的密码
+                .secret(passwordEncoder.encode("123456"))
+                // 注册验证方式
+                .authorizedGrantTypes("authorization_code", "password", "refresh_token")
+                .scopes("all")
+                // 跳转链接
+                .redirectUris("http://localhost:10090");
         // 从数据库中读取相应配置
-        clients.jdbc(dataSource);
+//        clients.jdbc(dataSource);
     }
 
     /**

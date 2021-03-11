@@ -4,12 +4,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
@@ -23,9 +25,11 @@ import java.io.IOException;
  * @date 2021-03-10
  * security默认使用StrictHttpFirewall限制用户请求，uri不能包含//, ./, / ../,  /.等（分号，斜杠，反斜杠，百分号等）
  * 用户的用户名不能包含非法字符，是因为; -- %等非法字符等在请求参数中被禁用
+ * EnableGlobalMethodSecurity(prePostEnabled = true) 开启数据权限注解支持 方法执行前校验权限
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true,securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
@@ -34,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser("admin")
                 // 必须要加密
                 .password(this.passwordEncoder().encode("admin"))
-                .roles("USER");
+                .roles("admin");
     }
 
     /**
@@ -74,7 +78,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 所有的请求都需要校验
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().permitAll();
+                .formLogin().permitAll()
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers("/admin/**")
+                // 用户具备多个角色的任意一个即可访问权限
+//                .hasAnyRole("")
+                // 用户具备某个角色即可访问权限
+//                .hasRole("admin")
+                // 统统不允许访问
+//        .antMatchers("/user").denyAll()
+                ;
 //        http.authorizeRequests()
 //                .anyRequest()
 //                .authenticated()
