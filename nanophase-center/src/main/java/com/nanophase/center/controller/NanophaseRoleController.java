@@ -13,6 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/user/nanophase-role")
-public class NanophaseRoleController  {
+public class NanophaseRoleController {
 
 }
