@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class NanophaseRole extends BaseEntity implements Serializable {
+public class NanophaseRole extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 

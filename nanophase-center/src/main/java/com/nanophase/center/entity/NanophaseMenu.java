@@ -19,7 +19,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class NanophaseMenu extends BaseEntity implements Serializable {
+public class NanophaseMenu extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,7 +37,7 @@ public class NanophaseMenu extends BaseEntity implements Serializable {
     /**
      * 父级ID
      */
-    private Long meunParentId;
+    private Long menuParentId;
 
     /**
      * 排序字段

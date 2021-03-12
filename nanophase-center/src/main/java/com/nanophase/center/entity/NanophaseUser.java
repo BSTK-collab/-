@@ -21,7 +21,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("nanophase_user")
-public class NanophaseUser extends BaseEntity implements Serializable {
+public class NanophaseUser extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
