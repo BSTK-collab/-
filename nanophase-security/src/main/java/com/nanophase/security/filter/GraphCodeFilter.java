@@ -36,5 +36,6 @@ public class GraphCodeFilter implements Filter {
                 throw new NanophaseException("验证图形验证码发生异常");
             }
         }
+        chain.doFilter(request, response);
     }
 }

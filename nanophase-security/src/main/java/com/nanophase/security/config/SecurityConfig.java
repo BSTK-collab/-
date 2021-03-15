@@ -1,5 +1,6 @@
 package com.nanophase.security.config;
 
+import com.nanophase.security.filter.GraphCodeFilter;
 import com.nanophase.security.handler.NanophaseAuthenticationFailHandler;
 import com.nanophase.security.handler.NanophaseAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import javax.servlet.ServletException;
@@ -80,6 +82,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // 在UsernamePasswordAuthenticationFilter之前进行图形验证吗校验
+//        http.addFilterBefore(new GraphCodeFilter(), UsernamePasswordAuthenticationFilter.class);
         http
                 .formLogin()
                 .successHandler(nanophaseAuthenticationSuccessHandler)
