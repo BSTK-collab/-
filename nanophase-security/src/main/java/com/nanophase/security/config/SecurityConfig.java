@@ -1,11 +1,15 @@
 package com.nanophase.security.config;
 
+import com.nanophase.security.handler.NanophaseAuthenticationFailHandler;
+import com.nanophase.security.handler.NanophaseAuthenticationSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
@@ -29,8 +33,14 @@ import java.io.IOException;
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true,securedEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private NanophaseAuthenticationFailHandler nanophaseAuthenticationFailHandler;
+
+    @Autowired
+    private NanophaseAuthenticationSuccessHandler nanophaseAuthenticationSuccessHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -53,6 +63,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    @Override
+    public void init(WebSecurity web) throws Exception {
+        super.configure(web);
+    }
+
     /**
      * 加密方法交给Spring管理
      *
@@ -65,30 +80,49 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http
+                .formLogin()
+                .successHandler(nanophaseAuthenticationSuccessHandler)
+                .failureHandler(nanophaseAuthenticationFailHandler)
+                .and()
+                .authorizeRequests()
+//                .antMatchers("oauth/**").permitAll()
+                .anyRequest()
+                .authenticated()
+//                .antMatchers("/oauth/token")
+//                .permitAll()
+                .and()
+                // 关闭跨域请求保护
+                .csrf().disable();
 //        http.authorizeRequests()
 //                .anyRequest().permitAll()
 //                .and().logout().permitAll()
 //                .and().csrf().disable().authorizeRequests();
 
-        http.csrf().disable()
-                .authorizeRequests()
-                // 这个请求不需要校验
-                .antMatchers("/oauth/**")
-                .permitAll()
-                // 所有的请求都需要校验
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().permitAll()
+//        http.csrf().disable()
+//                .authorizeRequests()
+////         这个请求不需要校验
+//                .antMatchers("/oauth/**")
+//                .permitAll()
+////         所有的请求都需要校验
+//                .authorizeRequests()
+//                .anyRequest().permitAll()
+//                .and()
+//                .formLogin().permitAll()
+////         登录成功后返回自定义的数据
+//                .successHandler(nanophaseAuthenticationSuccessHandler)
+////         登录失败后返回自定义的数据
+//                .failureHandler(nanophaseAuthenticationFailHandler)
 //                .and()
 //                .authorizeRequests()
 //                .antMatchers("/admin/**")
-                // 用户具备多个角色的任意一个即可访问权限
+////         用户具备多个角色的任意一个即可访问权限
 //                .hasAnyRole("")
-                // 用户具备某个角色即可访问权限
+////         用户具备某个角色即可访问权限
 //                .hasRole("admin")
-                // 统统不允许访问
+////         统统不允许访问
 //        .antMatchers("/user").denyAll()
-                ;
+//        ;
 //        http.authorizeRequests()
 //                .anyRequest()
 //                .authenticated()

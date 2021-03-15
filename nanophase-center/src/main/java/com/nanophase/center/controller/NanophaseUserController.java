@@ -7,10 +7,7 @@ import com.nanophase.common.annotation.ReadDB;
 import com.nanophase.common.annotation.WriteDB;
 import com.nanophase.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -49,5 +46,17 @@ public class NanophaseUserController {
     @PostMapping("/login")
     public R login(@RequestBody NanophaseUserDTO nanophaseUserDTO) {
         return iNanophaseUserService.login(nanophaseUserDTO);
+    }
+
+    /**
+     * 根据用户名查询用户密码
+     *
+     * @param username 登录账号 这里是email
+     * @return
+     */
+    @ReadDB
+    @PostMapping("/selectUserByName")
+    public NanophaseUserDTO selectUserByName(@RequestParam String username) {
+        return iNanophaseUserService.selectUserByName(username);
     }
 }

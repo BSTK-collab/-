@@ -30,4 +30,12 @@ public interface INanophaseUserService extends IService<NanophaseUser> {
      * @return R
      */
     R login(NanophaseUserDTO nanophaseUserDTO);
+
+    /**
+     * 根据用户名查询用户密码
+     *
+     * @param username 登录账号 这里是email
+     * @return
+     */
+    NanophaseUserDTO selectUserByName(String username);
 }

@@ -11,4 +11,10 @@ public interface CenterConstant {
         String MASTER = "master";
         String SLAVE = "slave";
     }
+
+    interface UserStatus {
+        Integer USER_STATUS_0 = 0;
+
+        Integer USER_STATUS_1 = 1;
+    }
 }

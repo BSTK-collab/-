@@ -1,15 +1,25 @@
 package com.nanophase.security.controller;
 
+import com.nanophase.common.util.R;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.endpoint.TokenEndpoint;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/hello")
 public class SecurityController {
+
+//    @Autowired
+//    private TokenEndpoint tokenEndpoint;
 
     /**
      * 方法进行前进行权限检查 只有admin用户才能执行该接口
@@ -35,4 +45,16 @@ public class SecurityController {
     public String hello1() {
         return "hello user";
     }
+
+    /**
+     * 构造token信息
+     *
+     * @param map client信息与用户数据
+     * @return R
+//     */
+//    @PostMapping("/token")
+//    public R getToken(Principal principal, @RequestParam Map<String, String> map) throws HttpRequestMethodNotSupportedException {
+//        OAuth2AccessToken oAuth2AccessToken = tokenEndpoint.postAccessToken(principal, map).getBody();
+//        return R.success().put("data",oAuth2AccessToken);
+//    }
 }

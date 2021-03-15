@@ -70,13 +70,13 @@ public class NanophaseUser extends BaseEntity {
      * 逻辑删除标志（0，未删除；1，已删除）
      * 默认0
      */
-    private Boolean userDeleted;
+    private Integer userDeleted;
 
     /**
      * 是否禁用（0，未禁用；1，已禁用）
      * 默认0
      */
-    private Boolean userStatus;
+    private Integer userStatus;
 
     /**
      * 用户类型

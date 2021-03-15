@@ -31,7 +31,7 @@ Druid针对oracle和mysql做了特别优化，比如Oracle的PS Cache内存占�
 
 SpringCloudSecurity + OAuth2.0 + JWT登录鉴权：
 登录方式：Token令牌
-使用JWT是因为可以自包含Token，不需要服务端持久化Token，携带在请求头上就可以
+使用JWT是因为可以自包含Token(存储Token可以使用redis，Jwt，这里使用Jwt)，不需要服务端持久化Token，携带在请求头上就可以
 JWT-header：由type：jwt（类型）和alg：HS256签名算法组成
 登录（授权认证）是为了安全访问，因为HTTP无状态
 SpringOAuth2.0标准是RFC6749文件，将OAuth解释为：OAuth引入了授权层，用来分离两种不同的角色。......资源所有者同意后，资源所有者可以向客户端办法令牌。

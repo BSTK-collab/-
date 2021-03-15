@@ -18,4 +18,9 @@ public class NanophaseUserDTO {
      * 登录密码
      */
     private String password;
+
+    /**
+     * 是否禁用（0，未禁用；1，已禁用）
+     */
+    private Integer userStatus;
 }

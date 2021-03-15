@@ -41,6 +41,12 @@
             <artifactId>nanophase-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!--远程调用-->
+        <dependency>
+            <groupId>com.nanophase</groupId>
+            <artifactId>nanophase-feign</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <!--图形验证码 防机器暴力破解-->
         <!-- https://mvnrepository.com/artifact/com.github.penggle/kaptcha -->
         <dependency>
@@ -51,6 +57,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-oauth2</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
         </dependency>
     </dependencies>
 

@@ -2,7 +2,6 @@ package com.nanophase.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,10 +10,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
-import javax.sql.DataSource;
 
 /**
  * @author zhj
@@ -32,15 +28,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-//    @Autowired
-//    private DataSource dataSource;
-
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        // 允许所有人请求令牌
-        security.tokenKeyAccess("permitAll()")
-                .checkTokenAccess("isAuthenticated()")
-                .allowFormAuthenticationForClients();
+        super.configure(security);
     }
 
     /**
@@ -56,13 +46,15 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 .withClient("123456")
                 // 加密的密码
                 .secret(passwordEncoder.encode("123456"))
-                // 注册验证方式
+                // 有效时间2小时
+                .accessTokenValiditySeconds(120)
+                // 注册验证方式(这里只注册了验证码方式，密码方式，刷新令牌方式)
                 .authorizedGrantTypes("authorization_code", "password", "refresh_token")
+                // 所有领域全部生效
                 .scopes("all")
                 // 跳转链接
-                .redirectUris("http://localhost:10090");
-        // 从数据库中读取相应配置
-//        clients.jdbc(dataSource);
+                .redirectUris("www.baidu.com")
+        ;
     }
 
     /**
@@ -73,21 +65,12 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
      */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(new InMemoryTokenStore())
-                .accessTokenConverter(accessTokenConverter())
-                .authenticationManager(authenticationManagerBean)
-                .reuseRefreshTokens(false);
-    }
-
-    /**
-     * Jwt转换器
-     *
-     * @return
-     */
-    @Bean
-    public JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-        jwtAccessTokenConverter.setSigningKey("mySigningkey");
-        return jwtAccessTokenConverter;
+//        endpoints.tokenStore(new InMemoryTokenStore())
+//                .accessTokenConverter(accessTokenConverter())
+//                .authenticationManager(authenticationManagerBean)
+//                .userDetailsService(nanophaseUserDetailService)
+//                .reuseRefreshTokens(false)
+        endpoints.authenticationManager(authenticationManagerBean);
+        ;
     }
 }
