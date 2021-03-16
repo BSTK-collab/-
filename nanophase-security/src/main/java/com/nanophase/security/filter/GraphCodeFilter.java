@@ -18,6 +18,16 @@ import java.io.IOException;
 @Slf4j
 public class GraphCodeFilter implements Filter {
 
+    /**
+     * 执行顺序:执行chain.doFilter之前的代码 执行完业务（service）后执行chain.doFilter之后的代码
+     * 如果有多个过滤器(过滤器链) FilterA impl Filter; FilterB impl Filter; FilterC impl Filter则按照名称排序执行
+     * (过滤器链)chain.doFilter满足先进后出的原则
+     * @param request
+     * @param response
+     * @param chain
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
@@ -31,7 +41,6 @@ public class GraphCodeFilter implements Filter {
             }
             if (graphSessionKey.equalsIgnoreCase(graphCode)) {
                 log.info("验证通过");
-                chain.doFilter(request, response);
             } else {
                 throw new NanophaseException("验证图形验证码发生异常");
             }
