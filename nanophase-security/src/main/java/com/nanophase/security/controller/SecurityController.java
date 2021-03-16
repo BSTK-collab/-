@@ -41,7 +41,7 @@ public class SecurityController {
     }
 
     /**
-     * 该方法必须具备user角色才可以访问，但是必须加上ROLE_前缀 并且开启注解支持 securedEnabled = true
+     * Secured({"ROLE_user"})必须具备user角色才可以访问，但是必须加上ROLE_前缀 并且开启注解支持 securedEnabled = true
      *  PostAuthorize("returnObject = 1") Spring EL 表达式 根据返回值判断是否有权限
      *  返回结果可以是对象，可以是其他类型，表达式为true时，正常返回； 反之 返回403
      *
