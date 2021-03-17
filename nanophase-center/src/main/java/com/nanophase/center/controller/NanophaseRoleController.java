@@ -35,6 +35,7 @@ public class NanophaseRoleController {
      * @param nanophaseRoleDTO
      * @return R
      */
+    @WebLog
     @ReadDB
     @PostMapping("/page")
     public R getRolePage(@RequestBody NanophaseRoleDTO nanophaseRoleDTO) {
