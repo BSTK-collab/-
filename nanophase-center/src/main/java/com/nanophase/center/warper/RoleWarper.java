@@ -15,7 +15,4 @@ import org.mapstruct.factory.Mappers;
 @MapperConfig
 public interface RoleWarper extends BaseWarper<NanophaseRole,NanophaseRoleDTO> {
     RoleWarper INSTANCE = Mappers.getMapper(RoleWarper.class);
-
-    @Override
-    NanophaseRole targetToSource(NanophaseRoleDTO var);
 }
