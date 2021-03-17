@@ -1,6 +1,8 @@
 package com.nanophase.center.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -45,11 +47,12 @@ public class NanophaseRoleMenu implements Serializable {
      */
     private Boolean nanophaseDeleted;
 
+    @TableField(value = "create_user",fill = FieldFill.INSERT)
     private String createUser;
 
+    @TableField(value = "create_user_name",fill = FieldFill.INSERT)
     private String createUserName;
 
+    @TableField(value = "create_date",fill = FieldFill.INSERT)
     private LocalDateTime createDate;
-
-
 }

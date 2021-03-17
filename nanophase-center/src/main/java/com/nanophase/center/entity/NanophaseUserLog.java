@@ -1,8 +1,6 @@
 package com.nanophase.center.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -35,25 +33,30 @@ public class NanophaseUserLog implements Serializable {
     /**
      * user主键
      */
+    @TableField("nanophase_user_id")
     private Long nanophaseUserId;
 
     /**
      * 用户邮箱
      */
+    @TableField("nanophase_user_eamil")
     private String nanophaseUserEamil;
 
     /**
      * 创建者
      */
+    @TableField(value = "create_user",fill = FieldFill.INSERT)
     private String createUser;
 
     /**
      * 创建者名称
      */
+    @TableField(value = "create_user_name",fill = FieldFill.INSERT)
     private String createUserName;
 
     /**
      * 记录创建日期 手动赋值
      */
+    @TableField(value = "create_date",fill = FieldFill.INSERT)
     private LocalDateTime createDate;
 }

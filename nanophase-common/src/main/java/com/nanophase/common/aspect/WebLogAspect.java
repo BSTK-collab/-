@@ -34,10 +34,10 @@ public class WebLogAspect {
     @Pointcut("@annotation(com.nanophase.common.annotation.WebLog)")
     public void logPoint(){}
 
-    @Around("logPoint() && @annotation(webLog)")
-    public Object before(ProceedingJoinPoint joinPoint, WebLog webLog) throws Throwable {
+    @Before("logPoint() && @annotation(webLog)")
+    public void before(JoinPoint joinPoint, WebLog webLog) {
         LOGGER.info("接收到请求============================");
-        Object proceed = joinPoint.proceed();
+//        Object proceed = joinPoint.proceed();
 //        ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
 //        assert attributes != null;
 //        HttpServletRequest request = attributes.getRequest();
@@ -46,6 +46,6 @@ public class WebLogAspect {
         Method method = signature.getMethod();
         LOGGER.info("Request Args:" + Arrays.toString(joinPoint.getArgs()));
         LOGGER.info("Method Name:" + method.getName());
-        return proceed;
+//        return proceed;
     }
 }

@@ -1,6 +1,7 @@
 package com.nanophase.center.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,25 +33,30 @@ public class NanophaseMenu extends BaseEntity {
     /**
      * 菜单名称
      */
+    @TableField("menu_name")
     private String menuName;
 
     /**
      * 父级ID
      */
+    @TableField("menu_parent_id")
     private Long menuParentId;
 
     /**
      * 排序字段
      */
+    @TableField("menu_sort")
     private Integer menuSort;
 
     /**
      * 菜单状态（0：未禁用；1：已禁用）
      */
+    @TableField("menu_status")
     private Integer menuStatus;
 
     /**
      * 显示状态（0：显示；1：未显示）
      */
+    @TableField("menu_visible")
     private Integer menuVisible;
 }

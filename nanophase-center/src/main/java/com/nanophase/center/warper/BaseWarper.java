@@ -1,29 +1,30 @@
 package com.nanophase.center.warper;
 
 import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.Mapper;
 import org.mapstruct.MapperConfig;
+import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
 /**
  * @author zhj
  * @since 2021-03-16
- * @apiNote 实体类基本转换
+ * @apiNote 实体类默认转换方法
  * @param <SOURCE>
  * @param <TARGET>
  */
-@MapperConfig
 public interface BaseWarper<SOURCE,TARGET> {
 
-    @InheritInverseConfiguration(name = "sourceToTarget")
+    @InheritInverseConfiguration
     TARGET sourceToTarget(SOURCE var);
 
-    @InheritInverseConfiguration(name = "sourceToTarget")
-    List<TARGET> sourceToTarget(List<SOURCE> var);
+//    @InheritInverseConfiguration
+//    List<TARGET> sourceToTarget(List<SOURCE> var);
 
-    @InheritInverseConfiguration(name = "targetToSource")
+    @InheritInverseConfiguration
     SOURCE targetToSource(TARGET var);
 
-    @InheritInverseConfiguration(name = "targetToSource")
+    @InheritInverseConfiguration
     List<SOURCE> targetToSource(List<TARGET> var);
 }

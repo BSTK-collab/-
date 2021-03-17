@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author zhj
@@ -13,23 +13,23 @@ import java.util.Date;
  */
 public class BaseEntity implements Serializable {
 
-//    @TableField(value = "create_user",fill = FieldFill.INSERT)
+    @TableField(value = "create_user",fill = FieldFill.INSERT)
     private String createUser;
 
-//    @TableField(value = "create_user_name",fill = FieldFill.INSERT)
+    @TableField(value = "create_user_name",fill = FieldFill.INSERT)
     private String createUserName;
 
-//    @TableField(value = "create_date",fill = FieldFill.INSERT)
-    private Date createDate;
+    @TableField(value = "create_date",fill = FieldFill.INSERT)
+    private LocalDateTime createDate;
 
-//    @TableField(value = "update_user",fill = FieldFill.UPDATE)
+    @TableField(value = "update_user",fill = FieldFill.UPDATE)
     private String updateUser;
 
-//    @TableField(value = "update_user_name",fill = FieldFill.UPDATE)
+    @TableField(value = "update_user_name",fill = FieldFill.UPDATE)
     private String updateUserName;
 
-//    @TableField(value = "update_date",fill = FieldFill.UPDATE)
-    private Date updateDate;
+    @TableField(value = "update_date",fill = FieldFill.UPDATE)
+    private LocalDateTime updateDate;
 
     public String getCreateUser() {
         return createUser;
@@ -47,11 +47,11 @@ public class BaseEntity implements Serializable {
         this.createUserName = createUserName;
     }
 
-    public Date getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
@@ -71,11 +71,11 @@ public class BaseEntity implements Serializable {
         this.updateUserName = updateUserName;
     }
 
-    public Date getUpdateDate() {
+    public LocalDateTime getUpdateDate() {
         return updateDate;
     }
 
-    public void setUpdateDate(Date updateDate) {
+    public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
 }

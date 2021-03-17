@@ -1,6 +1,7 @@
 package com.nanophase.center.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -34,15 +35,18 @@ public class NanophaseUserRole implements Serializable {
     /**
      * 用户ID
      */
+    @TableField("nanophase_user_id")
     private Long nanophaseUserId;
 
     /**
      * 角色ID
      */
+    @TableField("nanophase_role_id")
     private Long nanophaseRoleId;
 
     /**
      * 是否删除（0：未删除；1：已删除）
      */
+    @TableField("nanophase_deleted")
     private Boolean nanophaseDeleted;
 }

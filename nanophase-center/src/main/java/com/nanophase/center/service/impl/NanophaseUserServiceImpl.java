@@ -7,7 +7,7 @@ import com.nanophase.center.entity.NanophaseUserLog;
 import com.nanophase.center.mapper.NanophaseUserMapper;
 import com.nanophase.center.service.INanophaseUserLogService;
 import com.nanophase.center.service.INanophaseUserService;
-import com.nanophase.common.DTO.NanophaseUserDTO;
+import com.nanophase.common.dto.NanophaseUserDTO;
 import com.nanophase.common.constant.AuthConstant;
 import com.nanophase.common.constant.CenterConstant;
 import com.nanophase.common.enums.ErrorCodeEnum;
@@ -17,7 +17,6 @@ import com.nanophase.feign.security.SecurityApi;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

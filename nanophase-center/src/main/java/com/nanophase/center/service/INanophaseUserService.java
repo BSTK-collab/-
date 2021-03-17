@@ -2,7 +2,7 @@ package com.nanophase.center.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.nanophase.center.entity.NanophaseUser;
-import com.nanophase.common.DTO.NanophaseUserDTO;
+import com.nanophase.common.dto.NanophaseUserDTO;
 import com.nanophase.common.util.R;
 
 /**

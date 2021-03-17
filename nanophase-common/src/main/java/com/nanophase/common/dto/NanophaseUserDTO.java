@@ -1,4 +1,4 @@
-package com.nanophase.common.DTO;
+package com.nanophase.common.dto;
 
 import lombok.Data;
 

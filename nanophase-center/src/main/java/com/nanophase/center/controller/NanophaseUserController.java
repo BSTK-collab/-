@@ -2,7 +2,7 @@ package com.nanophase.center.controller;
 
 import com.nanophase.center.entity.NanophaseUser;
 import com.nanophase.center.service.INanophaseUserService;
-import com.nanophase.common.DTO.NanophaseUserDTO;
+import com.nanophase.common.dto.NanophaseUserDTO;
 import com.nanophase.common.annotation.ReadDB;
 import com.nanophase.common.annotation.WriteDB;
 import com.nanophase.common.util.R;
