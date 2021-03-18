@@ -8,12 +8,15 @@ import com.nanophase.center.mapper.NanophaseRoleMapper;
 import com.nanophase.center.service.INanophaseRoleService;
 import com.nanophase.center.warper.RoleWarper;
 import com.nanophase.common.dto.NanophaseRoleDTO;
+import com.nanophase.common.handler.NanophaseException;
 import com.nanophase.common.util.R;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -41,13 +44,17 @@ public class NanophaseRoleServiceImpl extends ServiceImpl<NanophaseRoleMapper, N
         queryWrapper.eq(nanophaseRoleDTO.getRoleStatus() != null, "role_status", nanophaseRoleDTO.getRoleStatus());
 
         // 角色名称
-        queryWrapper.eq(StringUtils.isNotBlank(nanophaseRoleDTO.getRoleName()), "role_name", nanophaseRoleDTO.getRoleName());
+        queryWrapper.like(StringUtils.isNotBlank(nanophaseRoleDTO.getRoleName()), "role_name", nanophaseRoleDTO.getRoleName());
 
         // 角色编码
-        queryWrapper.eq(StringUtils.isNotBlank(nanophaseRoleDTO.getRoleCode()), "role_code", nanophaseRoleDTO.getRoleCode());
+        queryWrapper.like(StringUtils.isNotBlank(nanophaseRoleDTO.getRoleCode()), "role_code", nanophaseRoleDTO.getRoleCode());
 
         // 是否删除
-        queryWrapper.eq(nanophaseRoleDTO.getRoleDelete() != null, "role_delete", nanophaseRoleDTO.getRoleDelete());
+        Integer roleDelete = nanophaseRoleDTO.getRoleDelete();
+        if (null == roleDelete) {
+            roleDelete = 0;
+        }
+        queryWrapper.eq("role_delete", roleDelete);
         return R.success().put("data", this.page(page, queryWrapper));
     }
 
@@ -59,6 +66,8 @@ public class NanophaseRoleServiceImpl extends ServiceImpl<NanophaseRoleMapper, N
      */
     @Override
     public R insertBatchRole(List<NanophaseRoleDTO> roleDTOS) {
+        // TODO: 2021/3/18 关于role code的校验与应用
+        verifyInsertRoleParam(roleDTOS);
         List<NanophaseRole> roles = new ArrayList<>();
         for (NanophaseRoleDTO roleDTO : roleDTOS) {
             if (StringUtils.isBlank(roleDTO.getRoleName())) {
@@ -75,5 +84,21 @@ public class NanophaseRoleServiceImpl extends ServiceImpl<NanophaseRoleMapper, N
             return R.success().put("dara", this.saveBatch(roles));
         }
         return R.success();
+    }
+
+    /**
+     * 校验新增的角色信息是否合法
+     *
+     * @param roleDTOS 校验参数
+     */
+    private void verifyInsertRoleParam(List<NanophaseRoleDTO> roleDTOS) {
+        if (null != roleDTOS && roleDTOS.size() > 0) {
+            // 角色名称不能重复
+            List<String> roleNames = roleDTOS.stream().map(NanophaseRoleDTO::getRoleName).collect(Collectors.toList());
+            List<NanophaseRole> list = this.list(new QueryWrapper<NanophaseRole>().eq("role_delete", 0).in("role_name", roleNames));
+            if (null != list && list.size() > 0) {
+                throw new NanophaseException("Role name already exists");
+            }
+        }
     }
 }

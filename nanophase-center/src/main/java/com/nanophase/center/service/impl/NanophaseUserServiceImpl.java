@@ -1,6 +1,7 @@
 package com.nanophase.center.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nanophase.center.entity.NanophaseUser;
 import com.nanophase.center.entity.NanophaseUserLog;
@@ -42,6 +43,11 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
     private SecurityApi securityApi;
 
     /**
+     * 用户信息分页查询 查询字段信息
+     */
+    private static final String[] SELECT_USER_PAGE_COLUMNS = {"user_id", "user_name", "nick_name", "user_email", "user_gender", "user_deleted", "user_status", "user_type", "user_region", "user_remark", "user_phone"};
+
+    /**
      * 用户注册
      *
      * @param nanophaseUser
@@ -76,7 +82,7 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
             // 保存用户登录记录
             NanophaseUserLog nanophaseUserLog = new NanophaseUserLog();
             nanophaseUserLog.setNanophaseUserId(nanophaseUser.getUserId());
-            nanophaseUserLog.setNanophaseUserEamil(nanophaseUser.getUserEmail());
+            nanophaseUserLog.setNanophaseUserEmail(nanophaseUser.getUserEmail());
             nanophaseUserLog.setCreateDate(LocalDateTime.now());
             boolean save = iNanophaseUserLogService.save(nanophaseUserLog);
             if (!save) {
@@ -91,14 +97,14 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
         Map<String, String> params = new HashMap<>();
         params.put("client_id", AuthConstant.CLIENT_ID_CENTER);
         // TODO: 2021/3/12  密码加密问题 client_secret应该可以自定义名字
-        params.put("client_secret",new BCryptPasswordEncoder().encode("123456"));
+        params.put("client_secret", new BCryptPasswordEncoder().encode("123456"));
         // oauth使用的四种授权方式之一，密码式
-        params.put("grant_type","password");
-        params.put("username",nanophaseUserDTO.getEmail());
-        params.put("password",nanophaseUser.getUserPassword());
+        params.put("grant_type", "password");
+        params.put("username", nanophaseUserDTO.getUserEmail());
+        params.put("password", nanophaseUser.getUserPassword());
         // 远程调用获取token
         R result = securityApi.getToken(params);
-        if (result == null || result.get("code").equals(HttpStatus.SC_OK) || result.get("data") == null){
+        if (result == null || result.get("code").equals(HttpStatus.SC_OK) || result.get("data") == null) {
             return R.error("登录失败");
         }
         return result;
@@ -116,11 +122,72 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
                 .eq("user_deleted", 0).select("user_password", "user_status"));
         if (null != nanophaseUser) {
             NanophaseUserDTO nanophaseUserDTO = new NanophaseUserDTO();
-            nanophaseUserDTO.setPassword(nanophaseUser.getUserPassword());
+            nanophaseUserDTO.setUserPassword(nanophaseUser.getUserPassword());
             nanophaseUserDTO.setUserStatus(nanophaseUser.getUserStatus());
             return nanophaseUserDTO;
         }
         return null;
+    }
+
+    /**
+     * 分页查询用户信息
+     *
+     * @param nanophaseUserDTO
+     * @return R
+     */
+    @Override
+    public R getUserPage(NanophaseUserDTO nanophaseUserDTO) {
+        Page<NanophaseUser> page = new Page<>(nanophaseUserDTO.getCurrent(), nanophaseUserDTO.getSize());
+        page.setOrders(nanophaseUserDTO.getOrderItems());
+        QueryWrapper<NanophaseUser> queryWrapper = new QueryWrapper<>();
+        // 是否删除
+        Integer userDeleted = nanophaseUserDTO.getUserDeleted();
+        if (userDeleted == null) {
+            userDeleted = 0;
+        }
+        queryWrapper.eq("user_deleted", userDeleted);
+
+        // 真实姓名
+        queryWrapper.like(StringUtils.isNotBlank(nanophaseUserDTO.getUserName()), "user_name", nanophaseUserDTO.getUserName());
+
+        // 用户昵称
+        queryWrapper.like(StringUtils.isNotBlank(nanophaseUserDTO.getNickName()), "nick_name", nanophaseUserDTO.getNickName());
+
+        // 用户邮箱 精确匹配
+        queryWrapper.eq(StringUtils.isNotBlank(nanophaseUserDTO.getUserEmail()), "user_email", nanophaseUserDTO.getUserEmail());
+
+        // 是否禁用
+        queryWrapper.eq(null != nanophaseUserDTO.getUserStatus(), "user_status", nanophaseUserDTO.getUserStatus());
+
+        // 用户类型
+        queryWrapper.eq(StringUtils.isNotBlank(nanophaseUserDTO.getUserType()), "user_type", nanophaseUserDTO.getUserType());
+
+        // 所在区域
+        queryWrapper.eq(StringUtils.isNotBlank(nanophaseUserDTO.getUserRegion()), "user_region", nanophaseUserDTO.getUserRegion());
+
+        // 查询指定字段
+        queryWrapper.select(SELECT_USER_PAGE_COLUMNS);
+        Page<NanophaseUser> resultPage = this.page(page, queryWrapper);
+        List<NanophaseUser> result = resultPage.getRecords();
+        if (null != result && result.size() > 0) {
+            // 隐藏电话号码的中间四位数 但是在内存中仍然可以看到
+            result.forEach(user -> user.setUserPhone(updateUserPhone(user.getUserPhone())));
+        }
+        resultPage.setRecords(result);
+        return R.success().put("data", resultPage);
+    }
+
+    /**
+     * 隐藏phone的中间四位数
+     *
+     * @param userPhone 用户手机号码
+     * @return 15100002222 -> 151****2222
+     */
+    private String updateUserPhone(String userPhone) {
+        if (StringUtils.isNotEmpty(userPhone) && userPhone.length() == CenterConstant.User.PHONE_SIZE) {
+            userPhone = userPhone.substring(0, 3) + "****" + userPhone.substring(7);
+        }
+        return userPhone;
     }
 
     /**
@@ -129,24 +196,24 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
      * @param nanophaseUserDTO
      */
     private NanophaseUser verifyLoginParam(NanophaseUserDTO nanophaseUserDTO) {
-        if (StringUtils.isBlank(nanophaseUserDTO.getEmail())) {
+        if (StringUtils.isBlank(nanophaseUserDTO.getUserEmail())) {
             throw new NanophaseException("Email cannot be empty");
         }
-        if (StringUtils.isBlank(nanophaseUserDTO.getPassword())) {
+        if (StringUtils.isBlank(nanophaseUserDTO.getUserPassword())) {
             throw new NanophaseException("Password cannot be empty");
         }
         // 校验用户名密码是否正确
         NanophaseUser nanophaseUser = this.getOne(new QueryWrapper<NanophaseUser>()
-                .eq("user_email", nanophaseUserDTO.getEmail())
+                .eq("user_email", nanophaseUserDTO.getUserEmail())
                 .eq("user_deleted", 0));
         if (null == nanophaseUser) {
             throw new NanophaseException("This email was not found, please register");
         }
         // 账号被禁用
-        if (nanophaseUser.getUserStatus().equals(CenterConstant.UserStatus.USER_STATUS_1)){
+        if (nanophaseUser.getUserStatus().equals(CenterConstant.User.USER_STATUS_1)) {
             throw new NanophaseException(ErrorCodeEnum.USER_DISABLED.getMsg());
         }
-        boolean matches = new BCryptPasswordEncoder().matches(nanophaseUserDTO.getPassword(), nanophaseUser.getUserPassword());
+        boolean matches = new BCryptPasswordEncoder().matches(nanophaseUserDTO.getUserPassword(), nanophaseUser.getUserPassword());
         if (!matches) {
             // 用户名或密码错误
             throw new NanophaseException("Email or password wrong");
@@ -170,6 +237,9 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
 
         if (StringUtils.isBlank(nanophaseUser.getUserEmail())) {
             throw new NanophaseException("email cannot be empty, please check");
+        }
+        if (StringUtils.isNotBlank(nanophaseUser.getUserPhone())) {
+            nanophaseUser.setUserPhone(nanophaseUser.getUserPhone().trim());
         }
     }
 }

@@ -28,7 +28,7 @@ public class NanophaseMenu extends BaseEntity {
      * 主键
      */
     @TableId(value = "menu_id", type = IdType.AUTO)
-    private Long menuId;
+    private Integer menuId;
 
     /**
      * 菜单名称
@@ -40,7 +40,7 @@ public class NanophaseMenu extends BaseEntity {
      * 父级ID
      */
     @TableField("menu_parent_id")
-    private Long menuParentId;
+    private Integer menuParentId;
 
     /**
      * 排序字段
@@ -59,4 +59,10 @@ public class NanophaseMenu extends BaseEntity {
      */
     @TableField("menu_visible")
     private Integer menuVisible;
+
+    /**
+     * 逻辑删除字段（0：未删除；1：已删除）
+     */
+    @TableField("menu_deleted")
+    private Integer menuDeleted;
 }

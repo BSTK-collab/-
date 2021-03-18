@@ -38,4 +38,12 @@ public interface INanophaseUserService extends IService<NanophaseUser> {
      * @return
      */
     NanophaseUserDTO selectUserByName(String username);
+
+    /**
+     * 分页查询用户信息
+     *
+     * @param nanophaseUserDTO
+     * @return R
+     */
+    R getUserPage(NanophaseUserDTO nanophaseUserDTO);
 }

@@ -6,7 +6,6 @@ import com.nanophase.common.enums.ErrorCodeEnum;
 import com.nanophase.feign.center.CenterApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,11 +27,11 @@ public class NanophaseUserDetailService implements UserDetailsService {
             throw new UsernameNotFoundException(ErrorCodeEnum.USERNAME_PASSWORD_ERROR.getMsg());
         }
 
-        if (nanophaseUserDTO.getUserStatus().equals(CenterConstant.UserStatus.USER_STATUS_1)) {
+        if (nanophaseUserDTO.getUserStatus().equals(CenterConstant.User.USER_STATUS_1)) {
             // 账号被禁用 TODO 在登录时校验；在设置为禁用时，直接将token置为无效
             throw new UserDeniedAuthorizationException(ErrorCodeEnum.USER_DISABLED.getMsg());
         }
-        return new User(username,nanophaseUserDTO.getPassword(),
+        return new org.springframework.security.core.userdetails.User(username,nanophaseUserDTO.getUserPassword(),
                 AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
     }
 }

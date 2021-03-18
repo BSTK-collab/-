@@ -2,6 +2,8 @@ package com.nanophase.common.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author zhj
  * @since 2021-03-17
@@ -12,7 +14,7 @@ public class NanophaseMenuDTO {
     /**
      * 主键
      */
-    private Long menuId;
+    private Integer menuId;
 
     /**
      * 菜单名称
@@ -22,7 +24,7 @@ public class NanophaseMenuDTO {
     /**
      * 父级ID
      */
-    private Long menuParentId;
+    private Integer menuParentId;
 
     /**
      * 排序字段
@@ -38,4 +40,14 @@ public class NanophaseMenuDTO {
      * 显示状态（0：显示；1：未显示）
      */
     private Integer menuVisible;
+
+    /**
+     * 逻辑删除字段（0：未删除；1：已删除）
+     */
+    private Integer menuDeleted;
+
+    /**
+     * 子菜单
+     */
+    private List<NanophaseMenuDTO> childMenus;
 }

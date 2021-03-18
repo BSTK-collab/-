@@ -2,6 +2,7 @@ package com.nanophase.center.warper;
 
 import org.mapstruct.InheritConfiguration;
 import org.mapstruct.InheritInverseConfiguration;
+import org.mapstruct.MapperConfig;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @param <SOURCE>
  * @param <TARGET>
  */
+@MapperConfig
 public interface BaseWarper<SOURCE,TARGET> {
 
     @InheritConfiguration

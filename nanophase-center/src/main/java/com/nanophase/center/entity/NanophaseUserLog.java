@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 
+ *  用户登录日志表
  * </p>
  *
  * @author zhj
@@ -39,8 +39,14 @@ public class NanophaseUserLog implements Serializable {
     /**
      * 用户邮箱
      */
-    @TableField("nanophase_user_eamil")
-    private String nanophaseUserEamil;
+    @TableField("nanophase_user_email")
+    private String nanophaseUserEmail;
+
+    /**
+     * 用户ip地址
+     */
+    @TableField("ip_addr")
+    private String ipAddr;
 
     /**
      * 创建者

@@ -2,6 +2,7 @@ package com.nanophase.center.controller;
 
 import com.nanophase.center.entity.NanophaseUser;
 import com.nanophase.center.service.INanophaseUserService;
+import com.nanophase.common.annotation.WebLog;
 import com.nanophase.common.dto.NanophaseUserDTO;
 import com.nanophase.common.annotation.ReadDB;
 import com.nanophase.common.annotation.WriteDB;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
- * 前端控制器
+ * 前端控制器 用户相关业务
  * </p>
  *
  * @author jobob
@@ -58,5 +59,18 @@ public class NanophaseUserController {
     @PostMapping("/selectUserByName")
     public NanophaseUserDTO selectUserByName(@RequestParam String username) {
         return iNanophaseUserService.selectUserByName(username);
+    }
+
+    /**
+     * 分页查询用户信息
+     *
+     * @param nanophaseUserDTO
+     * @return R
+     */
+    @WebLog
+    @ReadDB
+    @PostMapping("/page")
+    public R getUserPage(@RequestBody NanophaseUserDTO nanophaseUserDTO) {
+        return iNanophaseUserService.getUserPage(nanophaseUserDTO);
     }
 }
