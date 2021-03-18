@@ -13,6 +13,7 @@ import com.nanophase.common.constant.AuthConstant;
 import com.nanophase.common.constant.CenterConstant;
 import com.nanophase.common.enums.ErrorCodeEnum;
 import com.nanophase.common.handler.NanophaseException;
+import com.nanophase.common.util.NetworkUtil;
 import com.nanophase.common.util.R;
 import com.nanophase.feign.security.SecurityApi;
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +78,7 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
      * @return R
      */
     @Override
-    public R login(NanophaseUserDTO nanophaseUserDTO) {
+    public R login(NanophaseUserDTO nanophaseUserDTO, HttpServletRequest request) {
         NanophaseUser nanophaseUser = verifyLoginParam(nanophaseUserDTO);
         try {
             // 保存用户登录记录
@@ -84,6 +86,8 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
             nanophaseUserLog.setNanophaseUserId(nanophaseUser.getUserId());
             nanophaseUserLog.setNanophaseUserEmail(nanophaseUser.getUserEmail());
             nanophaseUserLog.setCreateDate(LocalDateTime.now());
+            // 用户所用机器的ip地址
+            nanophaseUserLog.setIpAddr(NetworkUtil.getIpAddress(request));
             boolean save = iNanophaseUserLogService.save(nanophaseUserLog);
             if (!save) {
                 // 保存用户登录记录失败

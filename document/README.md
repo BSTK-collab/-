@@ -1,6 +1,8 @@
 微服务采用技术
 主体技术使用：SpringCloud+SpringCloudAlibaba
 使用细节：SpringCloudSecurity+Nacos+OpenFeign+SpringGateway+Sentinel
+采用注解的方式读写分离(@WriteDb,@ReadDb)，如果不声明注解，默认使用写库；
+读写数据一致性问题：由于读写库采用异步同步方式,目前使用redis缓存方式解决数据一致性问题。
 nanophase:
  -nanophase-center   核心业务服务
  -nanaphase-common   公共模块
@@ -30,7 +32,7 @@ Druid针对oracle和mysql做了特别优化，比如Oracle的PS Cache内存占�
 通过Druid提供的SQL Parser可以在JDBC层拦截SQL做相应处理，比如说分库分表、审计等。Druid防御SQL注入攻击的WallFilter就是通过Druid的SQL Parser分析语义实现的 
 
 SpringCloudSecurity + OAuth2.0 + JWT登录鉴权：
-登录方式：Token令牌
+登录方式：Token令牌(与机器ip绑定，避免Token被外部机器窃取)
 使用JWT是因为可以自包含Token(存储Token可以使用redis，Jwt，这里使用Jwt)，不需要服务端持久化Token，携带在请求头上就可以
 JWT-header：由type：jwt（类型）和alg：HS256签名算法组成
 登录（授权认证）是为了安全访问，因为HTTP无状态
@@ -42,6 +44,10 @@ SpringOAuth2.0标准是RFC6749文件，将OAuth解释为：OAuth引入了授权�
 4,客户端凭证(client credentials)
 但是不管哪一种方案，第三方在在拿到申请令牌之前，都需要到系统备案，然后会拿到身份的识别编码(client_id,客户端ID)和(client_secret，客户端密钥)
 详情：学习网站：http://www.ruanyifeng.com/blog/2019/04/oauth-grant-types.html
+机器ip:
+登录方式目前采用Token与机器ip绑定的方式，在获取机器ip时如果用户使用的nginx或者Apache等组件进行反向代理，则无法通过request.getRemoteAddr()
+获取真实的ip地址。原因：使用了代理后，client端不会请求服务端，而是请求代理端，由代理器去请求服务端，服务端拿到的地址为代理端的地址
+地址：https://www.cnblogs.com/xlhan/p/7154577.html
 
 
 

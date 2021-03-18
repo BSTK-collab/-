@@ -5,6 +5,8 @@ import com.nanophase.center.entity.NanophaseUser;
 import com.nanophase.common.dto.NanophaseUserDTO;
 import com.nanophase.common.util.R;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  *  服务类
@@ -29,7 +31,7 @@ public interface INanophaseUserService extends IService<NanophaseUser> {
      * @param nanophaseUserDTO
      * @return R
      */
-    R login(NanophaseUserDTO nanophaseUserDTO);
+    R login(NanophaseUserDTO nanophaseUserDTO, HttpServletRequest request);
 
     /**
      * 根据用户名查询用户密码

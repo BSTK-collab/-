@@ -10,6 +10,8 @@ import com.nanophase.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * 前端控制器 用户相关业务
@@ -45,8 +47,8 @@ public class NanophaseUserController {
      */
     @ReadDB
     @PostMapping("/login")
-    public R login(@RequestBody NanophaseUserDTO nanophaseUserDTO) {
-        return iNanophaseUserService.login(nanophaseUserDTO);
+    public R login(@RequestBody NanophaseUserDTO nanophaseUserDTO, HttpServletRequest request) {
+        return iNanophaseUserService.login(nanophaseUserDTO,request);
     }
 
     /**
