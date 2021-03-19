@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser("admin")
                 // 必须要加密
                 .password(this.passwordEncoder().encode("admin"))
-                .roles("admin");
+                .authorities("admin");
     }
 
     /**

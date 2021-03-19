@@ -45,7 +45,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 // client ID
                 .withClient("123456")
                 // 加密的密码
-                .secret(passwordEncoder.encode("123456"))
+                .secret("123456")
                 // 有效时间2小时
                 .accessTokenValiditySeconds(120)
                 // 注册验证方式(这里只注册了验证码方式，密码方式，刷新令牌方式)

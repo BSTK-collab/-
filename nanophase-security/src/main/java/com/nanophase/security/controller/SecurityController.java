@@ -59,6 +59,25 @@ public class SecurityController {
         return "hello user";
     }
 
+    @GetMapping("/oauth2/api/read/1")
+    public Authentication read() {
+        //for debug
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        System.out.println("read");
+
+        return authentication;
+    }
+
+    @GetMapping("/oauth2/api/write/1")
+    public Authentication write() {
+        //for debug
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("write");
+        return authentication;
+    }
+
+
     /**
      * 构造token信息
      *
