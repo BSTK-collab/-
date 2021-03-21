@@ -34,7 +34,10 @@ Druid针对oracle和mysql做了特别优化，比如Oracle的PS Cache内存占�
 SpringCloudSecurity + OAuth2.0 + JWT登录鉴权：
 登录方式：Token令牌(与机器ip绑定，避免Token被外部机器窃取)
 使用JWT是因为可以自包含Token(存储Token可以使用redis，Jwt，这里使用Jwt)，不需要服务端持久化Token，携带在请求头上就可以
-JWT-header：由type：jwt（类型）和alg：HS256签名算法组成
+1，JWT-header：由type：jwt（类型）和alg：HS256签名算法组成，主要部分就是签名算法
+2，载荷(payload)：用户的唯一标识，过期时间等信息。这个部分包括header都是使用base64加密，可以进行反推解密
+为什么使用base64加密：也可以说压缩算法，考虑到特殊字符的情况
+3，签名：签名 = hash(base64Header + base64Payload + 密文)
 登录（授权认证）是为了安全访问，因为HTTP无状态
 SpringOAuth2.0标准是RFC6749文件，将OAuth解释为：OAuth引入了授权层，用来分离两种不同的角色。......资源所有者同意后，资源所有者可以向客户端办法令牌。
 客户端通过令牌，去请求数据。由于互联网有多种场景，本标准定义了四种授权方式:
@@ -48,6 +51,7 @@ SpringOAuth2.0标准是RFC6749文件，将OAuth解释为：OAuth引入了授权�
 登录方式目前采用Token与机器ip绑定的方式，在获取机器ip时如果用户使用的nginx或者Apache等组件进行反向代理，则无法通过request.getRemoteAddr()
 获取真实的ip地址。原因：使用了代理后，client端不会请求服务端，而是请求代理端，由代理器去请求服务端，服务端拿到的地址为代理端的地址
 地址：https://www.cnblogs.com/xlhan/p/7154577.html
+Token被截获问题：ssl，tls传输加密，非对称加密
 
 
 
