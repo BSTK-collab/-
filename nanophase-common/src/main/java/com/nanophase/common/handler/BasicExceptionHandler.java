@@ -17,6 +17,6 @@ public class BasicExceptionHandler {
     @ExceptionHandler(NanophaseException.class)
     public R handleException(NanophaseException e) {
         e.printStackTrace();
-        return R.error("500", e.getMessage());
+        return R.error(500, e.getMessage());
     }
 }

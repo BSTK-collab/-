@@ -1,6 +1,8 @@
 package com.nanophase.security.controller;
 
+import com.nanophase.common.dto.NanophaseUserDTO;
 import com.nanophase.common.util.R;
+import com.nanophase.security.service.NanophaseUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -16,15 +18,19 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/hello")
+@RequestMapping("/security")
 public class SecurityController {
 
-//    @Autowired
-//    private TokenEndpoint tokenEndpoint;
+    @Autowired
+    private TokenEndpoint tokenEndpoint;
+
+    @Autowired
+    private NanophaseUserService nanophaseUserService;
 
     /**
      * 方法进行前进行权限检查 只有admin用户才能执行该接口
@@ -42,8 +48,8 @@ public class SecurityController {
 
     /**
      * Secured({"ROLE_user"})必须具备user角色才可以访问，但是必须加上ROLE_前缀 并且开启注解支持 securedEnabled = true
-     *  PostAuthorize("returnObject = 1") Spring EL 表达式 根据返回值判断是否有权限
-     *  返回结果可以是对象，可以是其他类型，表达式为true时，正常返回； 反之 返回403
+     * PostAuthorize("returnObject = 1") Spring EL 表达式 根据返回值判断是否有权限
+     * 返回结果可以是对象，可以是其他类型，表达式为true时，正常返回； 反之 返回403
      *
      * @return
      */
@@ -77,16 +83,14 @@ public class SecurityController {
         return authentication;
     }
 
-
     /**
-     * 构造token信息
+     * 加载loadUserByUserName方法
      *
-     * @param map client信息与用户数据
+     * @param user 用户信息
      * @return R
-//     */
-//    @PostMapping("/token")
-//    public R getToken(Principal principal, @RequestParam Map<String, String> map) throws HttpRequestMethodNotSupportedException {
-//        OAuth2AccessToken oAuth2AccessToken = tokenEndpoint.postAccessToken(principal, map).getBody();
-//        return R.success().put("data",oAuth2AccessToken);
-//    }
+     */
+    @PostMapping("/loadUserByUsername")
+    public R loadUserByUsername(@RequestBody NanophaseUserDTO user) {
+        return nanophaseUserService.loadUserByUsername(user);
+    }
 }

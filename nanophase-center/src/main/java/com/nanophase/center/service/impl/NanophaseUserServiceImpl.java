@@ -1,5 +1,8 @@
 package com.nanophase.center.service.impl;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.impl.JWTParser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,22 +14,23 @@ import com.nanophase.center.service.INanophaseUserService;
 import com.nanophase.common.dto.NanophaseUserDTO;
 import com.nanophase.common.constant.AuthConstant;
 import com.nanophase.common.constant.CenterConstant;
+import com.nanophase.common.dto.TokenDTO;
 import com.nanophase.common.enums.ErrorCodeEnum;
 import com.nanophase.common.handler.NanophaseException;
+import com.nanophase.common.util.JwtUtil;
 import com.nanophase.common.util.NetworkUtil;
 import com.nanophase.common.util.R;
 import com.nanophase.feign.security.SecurityApi;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -43,6 +47,8 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
     private INanophaseUserLogService iNanophaseUserLogService;
     @Autowired
     private SecurityApi securityApi;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 用户信息分页查询 查询字段信息
@@ -80,6 +86,7 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
     @Override
     public R login(NanophaseUserDTO nanophaseUserDTO, HttpServletRequest request) {
         NanophaseUser nanophaseUser = verifyLoginParam(nanophaseUserDTO);
+        String ipAddress = "";
         try {
             // 保存用户登录记录
             NanophaseUserLog nanophaseUserLog = new NanophaseUserLog();
@@ -87,7 +94,8 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
             nanophaseUserLog.setNanophaseUserEmail(nanophaseUser.getUserEmail());
             nanophaseUserLog.setCreateDate(LocalDateTime.now());
             // 用户所用机器的ip地址
-            nanophaseUserLog.setIpAddr(NetworkUtil.getIpAddress(request));
+            ipAddress = NetworkUtil.getIpAddress(request);
+            nanophaseUserLog.setIpAddr(ipAddress);
             boolean save = iNanophaseUserLogService.save(nanophaseUserLog);
             if (!save) {
                 // 保存用户登录记录失败
@@ -96,22 +104,30 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // 远程调用security 获取token
-        // 构造获取token所需参数
-        Map<String, String> params = new HashMap<>();
-        params.put("client_id", AuthConstant.CLIENT_ID_CENTER);
-        // TODO: 2021/3/12  密码加密问题 client_secret应该可以自定义名字
-        params.put("client_secret", new BCryptPasswordEncoder().encode("123456"));
-        // oauth使用的四种授权方式之一，密码式
-        params.put("grant_type", "password");
-        params.put("username", nanophaseUserDTO.getUserEmail());
-        params.put("password", nanophaseUser.getUserPassword());
-        // 远程调用获取token
-        R result = securityApi.getToken(params);
-        if (result == null || result.get("code").equals(HttpStatus.SC_OK) || result.get("data") == null) {
-            return R.error("登录失败");
+        // 远程调用 loadUserByUsername
+        List<String> roles = new ArrayList<>();
+        nanophaseUserDTO.setRoles(roles);
+        R result = securityApi.loadUserByUsername(nanophaseUserDTO);
+        if (null != result && Integer.parseInt(result.get("code").toString()) == 200) {
+            // 调用成功 生成token
+            String token = createToken(nanophaseUserDTO, ipAddress);
+            TokenDTO tokenDTO = new TokenDTO();
+            tokenDTO.setToken(token);
+            tokenDTO.setPrefix(AuthConstant.TOKEN_PREFIX);
+            return R.success().put("data",tokenDTO);
         }
-        return result;
+        return R.error();
+    }
+
+    /**
+     * 创建token
+     *
+     * @param nanophaseUserDTO user信息
+     * @param ipAddress 用户登录时的ip
+     * @return
+     */
+    private String createToken(NanophaseUserDTO nanophaseUserDTO, String ipAddress) {
+        return JwtUtil.createJwt(nanophaseUserDTO, ipAddress);
     }
 
     /**

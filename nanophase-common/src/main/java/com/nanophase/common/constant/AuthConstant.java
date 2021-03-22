@@ -7,4 +7,5 @@ package com.nanophase.common.constant;
  */
 public interface AuthConstant {
     String CLIENT_ID_CENTER = "nanophase_center_client";
+    String TOKEN_PREFIX = "Bearer ";
 }

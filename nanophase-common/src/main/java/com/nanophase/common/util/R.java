@@ -6,7 +6,7 @@ import java.util.Map;
 public class R extends HashMap<String, Object> {
 
     public R() {
-        this.put("code", "200");
+        this.put("code", 200);
         this.put("msg", "success");
     }
 
@@ -32,14 +32,14 @@ public class R extends HashMap<String, Object> {
     }
 
     public static R error(){
-        return error("500","未知异常");
+        return error(500,"未知异常");
     }
 
     public static R error(String msg){
-        return error("500",msg);
+        return error(500,msg);
     }
 
-    public static R error(String code,Object value){
+    public static R error(int code,Object value){
         R r = new R();
         r.put("code",code);
         r.put("msg",value);

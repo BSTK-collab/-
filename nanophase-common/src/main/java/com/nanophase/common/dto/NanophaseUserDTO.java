@@ -3,6 +3,8 @@ package com.nanophase.common.dto;
 import com.nanophase.common.dto.page.PageDTO;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author zhj
  * @date 2021-03-09
@@ -76,4 +78,9 @@ public class NanophaseUserDTO extends PageDTO {
      * 备注信息
      */
     private String userRemark;
+
+    /**
+     * 用户的权限信息
+     */
+    private List<String> roles;
 }
