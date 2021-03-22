@@ -2,7 +2,9 @@ package com.nanophase.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -10,6 +12,10 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.AccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 
 /**
@@ -25,12 +31,13 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManagerBean;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        super.configure(security);
+        // 允许表单认证
+        security.allowFormAuthenticationForClients()
+        .tokenKeyAccess("permitAll()")
+                .checkTokenAccess("isAuthenticated()")
+        ;
     }
 
     /**
@@ -53,7 +60,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 // 所有领域全部生效
                 .scopes("all")
                 // 跳转链接
-                .redirectUris("www.baidu.com")
+                .redirectUris("http://localhost:10090")
         ;
     }
 
@@ -65,12 +72,22 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
      */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-//        endpoints.tokenStore(new InMemoryTokenStore())
-//                .accessTokenConverter(accessTokenConverter())
-//                .authenticationManager(authenticationManagerBean)
-//                .userDetailsService(nanophaseUserDetailService)
-//                .reuseRefreshTokens(false)
-        endpoints.authenticationManager(authenticationManagerBean);
-        ;
+        endpoints.tokenStore(new InMemoryTokenStore())
+                .accessTokenConverter(accessTokenConverter())
+                .authenticationManager(authenticationManagerBean)
+                .reuseRefreshTokens(false)
+                ;
+
+    }
+
+    /**
+     * jwt转换器
+     * @return
+     */
+    @Bean
+    public AccessTokenConverter accessTokenConverter() {
+        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+        jwtAccessTokenConverter.setSigningKey("mySigningkey");
+        return jwtAccessTokenConverter;
     }
 }

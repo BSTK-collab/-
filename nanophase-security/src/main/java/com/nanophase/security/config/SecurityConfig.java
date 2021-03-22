@@ -1,6 +1,5 @@
 package com.nanophase.security.config;
 
-import com.nanophase.security.filter.GraphCodeFilter;
 import com.nanophase.security.handler.NanophaseAuthenticationFailHandler;
 import com.nanophase.security.handler.NanophaseAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,21 +9,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * @author zhj
@@ -65,10 +53,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    @Override
-    public void init(WebSecurity web) throws Exception {
-        super.configure(web);
-    }
+//    @Override
+//    public void init(WebSecurity web) throws Exception {
+//        super.configure(web);
+//    }
 
     /**
      * 加密方法交给Spring管理
@@ -88,9 +76,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .successHandler(nanophaseAuthenticationSuccessHandler)
                 .failureHandler(nanophaseAuthenticationFailHandler)
+                .permitAll()
                 .and()
                 .authorizeRequests()
-//                .antMatchers("oauth/**").permitAll()
+                .antMatchers("oauth/**").permitAll()
                 .anyRequest()
                 .authenticated()
 //                .antMatchers("/oauth/token")
