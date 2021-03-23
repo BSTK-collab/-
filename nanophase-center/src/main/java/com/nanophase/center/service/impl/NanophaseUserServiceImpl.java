@@ -1,8 +1,5 @@
 package com.nanophase.center.service.impl;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.impl.JWTParser;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,16 +8,19 @@ import com.nanophase.center.entity.NanophaseUserLog;
 import com.nanophase.center.mapper.NanophaseUserMapper;
 import com.nanophase.center.service.INanophaseUserLogService;
 import com.nanophase.center.service.INanophaseUserService;
+import com.nanophase.common.constant.RedisConstant;
 import com.nanophase.common.dto.NanophaseUserDTO;
 import com.nanophase.common.constant.AuthConstant;
 import com.nanophase.common.constant.CenterConstant;
 import com.nanophase.common.dto.TokenDTO;
 import com.nanophase.common.enums.ErrorCodeEnum;
 import com.nanophase.common.handler.NanophaseException;
+import com.nanophase.common.manager.AsyncManager;
 import com.nanophase.common.util.JwtUtil;
 import com.nanophase.common.util.NetworkUtil;
 import com.nanophase.common.util.R;
 import com.nanophase.feign.security.SecurityApi;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -40,6 +41,7 @@ import java.util.List;
  * @author zhj
  * @since 2021-03-08
  */
+@Slf4j
 @Service
 public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, NanophaseUser> implements INanophaseUserService {
 
@@ -86,44 +88,74 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
     @Override
     public R login(NanophaseUserDTO nanophaseUserDTO, HttpServletRequest request) {
         NanophaseUser nanophaseUser = verifyLoginParam(nanophaseUserDTO);
-        String ipAddress = "";
+        // 用户所用机器的ip地址
+        String ipAddress = NetworkUtil.getIpAddress(request);
         try {
-            // 保存用户登录记录
-            NanophaseUserLog nanophaseUserLog = new NanophaseUserLog();
-            nanophaseUserLog.setNanophaseUserId(nanophaseUser.getUserId());
-            nanophaseUserLog.setNanophaseUserEmail(nanophaseUser.getUserEmail());
-            nanophaseUserLog.setCreateDate(LocalDateTime.now());
-            // 用户所用机器的ip地址
-            ipAddress = NetworkUtil.getIpAddress(request);
-            nanophaseUserLog.setIpAddr(ipAddress);
-            boolean save = iNanophaseUserLogService.save(nanophaseUserLog);
-            if (!save) {
-                // 保存用户登录记录失败
-                throw new NanophaseException("保存用户登录日志异常");
+            List<String> roles = new ArrayList<>();
+            nanophaseUserDTO.setRoles(roles);
+            // 远程调用 loadUserByUsername
+            R result = securityApi.loadUserByUsername(nanophaseUserDTO);
+            if (null == result || !(Integer.parseInt(result.get("code").toString()) == 200)) {
+                throw new NanophaseException("远程调用失败");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // 远程调用 loadUserByUsername
-        List<String> roles = new ArrayList<>();
-        nanophaseUserDTO.setRoles(roles);
-        R result = securityApi.loadUserByUsername(nanophaseUserDTO);
-        if (null != result && Integer.parseInt(result.get("code").toString()) == 200) {
+
             // 调用成功 生成token
             String token = createToken(nanophaseUserDTO, ipAddress);
             TokenDTO tokenDTO = new TokenDTO();
             tokenDTO.setToken(token);
             tokenDTO.setPrefix(AuthConstant.TOKEN_PREFIX);
-            return R.success().put("data",tokenDTO);
+            redisTemplate.opsForValue().set(RedisConstant.USER_KEY.JWT_TOKEN_PREFIX + nanophaseUser.getUserId(),token,
+                    RedisConstant.TOKEN_EXPIRES, TimeUnit.SECONDS);
+            // 异步执行用户登录日志记录
+            saveUserLoginLog(nanophaseUser, ipAddress, null);
+            return R.success().put("data", tokenDTO);
+        } catch (Exception e) {
+            // 异步执行用户登录日志记录
+            saveUserLoginLog(nanophaseUser, ipAddress, e);
+            return R.error("登录失败");
         }
-        return R.error();
+    }
+
+    /**
+     * 异步保存用户登录日志
+     *
+     * @param nanophaseUser 用户信息
+     * @param ipAddress ip地址
+     * @param exception 异常信息
+     */
+    private void saveUserLoginLog(NanophaseUser nanophaseUser, String ipAddress, Exception exception) {
+        AsyncManager.getInstance().execute(() -> {
+            try {
+                // 保存用户登录记录
+                NanophaseUserLog nanophaseUserLog = new NanophaseUserLog();
+                nanophaseUserLog.setNanophaseUserId(nanophaseUser.getUserId());
+                nanophaseUserLog.setNanophaseUserEmail(nanophaseUser.getUserEmail());
+                nanophaseUserLog.setCreateDate(LocalDateTime.now());
+                nanophaseUserLog.setIpAddr(ipAddress);
+                nanophaseUserLog.setLoginStatus(0);
+
+                // 保存用户登录异常的信息
+                if (null != exception) {
+                    // TODO: 2021/3/23 DB未增加字段 后期增加
+                    nanophaseUserLog.setEMessage(exception.getMessage());
+                    nanophaseUserLog.setLoginStatus(1);
+                }
+                boolean save = iNanophaseUserLogService.save(nanophaseUserLog);
+                if (!save) {
+                    // 保存用户登录记录失败
+                    throw new NanophaseException("保存用户登录日志异常");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, null);
     }
 
     /**
      * 创建token
      *
      * @param nanophaseUserDTO user信息
-     * @param ipAddress 用户登录时的ip
+     * @param ipAddress        用户登录时的ip
      * @return
      */
     private String createToken(NanophaseUserDTO nanophaseUserDTO, String ipAddress) {

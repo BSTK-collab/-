@@ -32,8 +32,9 @@ public class HelloController {
 
     @WebLog
     @PostMapping("/h")
-    public String h(@RequestBody Test test) {
-        return test.toString();
+    public String h() {
+        String str = helloService.testThreadPool();
+        return str;
     }
 
     @ReadDB

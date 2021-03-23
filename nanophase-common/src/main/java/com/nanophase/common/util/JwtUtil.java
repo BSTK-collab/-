@@ -25,7 +25,7 @@ public class JwtUtil {
         Calendar calendar = Calendar.getInstance();
         Date date = new Date();
         calendar.setTime(date);
-        calendar.add(Calendar.DAY_OF_MONTH,1);
+        calendar.add(Calendar.HOUR_OF_DAY,2);
         return JWT.create().withSubject("subject")
                 .withIssuedAt(date)
                 .withExpiresAt(calendar.getTime())

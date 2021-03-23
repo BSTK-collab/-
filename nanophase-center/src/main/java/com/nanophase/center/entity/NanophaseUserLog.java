@@ -49,6 +49,18 @@ public class NanophaseUserLog implements Serializable {
     private String ipAddr;
 
     /**
+     * 是否登录成功 0:成功；1：失败
+     */
+    @TableField("login_status")
+    private Integer loginStatus;
+
+    /**
+     * 登录异常原因
+     */
+    @TableField("e_message")
+    private String eMessage;
+
+    /**
      * 创建者
      */
     @TableField(value = "create_user",fill = FieldFill.INSERT)
