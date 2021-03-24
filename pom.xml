@@ -11,6 +11,7 @@
         <module>nanophase-common</module>
         <module>nanophase-feign</module>
         <module>nanophase-sentinel</module>
+        <module>nanophase-algorithm</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
