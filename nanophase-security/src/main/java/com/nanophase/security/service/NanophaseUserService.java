@@ -2,8 +2,9 @@ package com.nanophase.security.service;
 
 import com.nanophase.common.dto.NanophaseUserDTO;
 import com.nanophase.common.util.R;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface NanophaseUserService {
+public interface NanophaseUserService extends UserDetailsService {
 
     /**
      * 加载loadUserByUserName方法
@@ -11,5 +12,5 @@ public interface NanophaseUserService {
      * @param user 用户信息
      * @return R
      */
-    R loadUserByUsername(NanophaseUserDTO user);
+//    R loadUserByUsername(NanophaseUserDTO user);
 }

@@ -8,7 +8,7 @@ import java.util.Random;
  * @apiNote 排序算法的一些辅助工具类
  * @since 2021-03-24
  */
-public class sortUtil {
+public class SortUtil {
 
     /**
      * 循环校验次数
@@ -22,7 +22,7 @@ public class sortUtil {
      */
     public static void print(int[] arr) {
         for (int i : arr) {
-            System.out.println(i + " ");
+            System.out.print(i + " ");
         }
     }
 

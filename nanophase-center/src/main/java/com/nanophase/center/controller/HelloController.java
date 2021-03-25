@@ -57,17 +57,13 @@ public class HelloController {
 
     /**
      * 测试获取ip地址
+     *
      * @param request
      * @return
      */
     @GetMapping("/getIp")
-    public String getIp(HttpServletRequest request){
-        try {
-            return NetworkUtil.getIpAddress(request);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
+    public String getIp(HttpServletRequest request) {
+        return NetworkUtil.getIpAddress(request);
     }
 }
 

@@ -26,6 +26,9 @@ import java.util.Map;
 @RequestMapping("/security")
 public class SecurityController {
 
+    /**
+     * 注入时如果没有认证服务器会启动异常
+     */
     @Autowired
     private TokenEndpoint tokenEndpoint;
 
@@ -41,7 +44,7 @@ public class SecurityController {
      * @return
      */
     @GetMapping
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasAnyAuthority('admin')")
     public String hello() {
         return "hello";
     }
@@ -89,8 +92,8 @@ public class SecurityController {
      * @param user 用户信息
      * @return R
      */
-    @PostMapping("/loadUserByUsername")
-    public R loadUserByUsername(@RequestBody NanophaseUserDTO user) {
-        return nanophaseUserService.loadUserByUsername(user);
-    }
+//    @PostMapping("/loadUserByUsername")
+//    public R loadUserByUsername(@RequestBody NanophaseUserDTO user) {
+//        return nanophaseUserService.loadUserByUsername(user);
+//    }
 }

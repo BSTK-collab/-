@@ -2,6 +2,7 @@ package com.nanophase.security.config;
 
 import com.nanophase.security.handler.NanophaseAuthenticationFailHandler;
 import com.nanophase.security.handler.NanophaseAuthenticationSuccessHandler;
+import com.nanophase.security.service.NanophaseUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,8 +33,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private NanophaseAuthenticationSuccessHandler nanophaseAuthenticationSuccessHandler;
 
+    @Autowired
+    private NanophaseUserService nanophaseUserService;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(nanophaseUserService);
         auth.inMemoryAuthentication()
                 .withUser("admin")
                 // 必须要加密
@@ -79,7 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers("oauth/**").permitAll()
+//                .antMatchers("oauth/**").permitAll()
                 .anyRequest()
                 .authenticated()
 //                .antMatchers("/oauth/token")
@@ -87,65 +92,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // 关闭跨域请求保护
                 .csrf().disable();
-//        http.authorizeRequests()
-//                .anyRequest().permitAll()
-//                .and().logout().permitAll()
-//                .and().csrf().disable().authorizeRequests();
-
-//        http.csrf().disable()
-//                .authorizeRequests()
-////         这个请求不需要校验
-//                .antMatchers("/oauth/**")
-//                .permitAll()
-////         所有的请求都需要校验
-//                .authorizeRequests()
-//                .anyRequest().permitAll()
-//                .and()
-//                .formLogin().permitAll()
-////         登录成功后返回自定义的数据
-//                .successHandler(nanophaseAuthenticationSuccessHandler)
-////         登录失败后返回自定义的数据
-//                .failureHandler(nanophaseAuthenticationFailHandler)
-//                .and()
-//                .authorizeRequests()
-//                .antMatchers("/admin/**")
-////         用户具备多个角色的任意一个即可访问权限
-//                .hasAnyRole("")
-////         用户具备某个角色即可访问权限
-//                .hasRole("admin")
-////         统统不允许访问
-//        .antMatchers("/user").denyAll()
-//        ;
-//        http.authorizeRequests()
-//                .anyRequest()
-//                .authenticated()
-//                // 配置ip白名单
-//                .antMatchers("nanophase-user/login")
-//                .hasIpAddress("127.0.0.1")
-//                .and()
-//                .formLogin()
-//                // 如果访问的时登录页  返回指定地址
-//                .defaultSuccessUrl("指定地址",true)
-//                // 登录成功处理器
-//                .successHandler(new AuthenticationSuccessHandler() {
-//                    @Override
-//                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-//                        System.out.println("登录成功");
-//                        // 可以根据权限跳转至不同的页面
-//                        request.getSession().getAttribute("");
-//                        request.getRequestDispatcher("").forward(request,response);
-//                    }
-//                })
-//                // 错误页
-//                .failureUrl("")
-//                .and()
-//                .logout()
-//                // 退出处理器 可以 .多个
-//                .addLogoutHandler(new LogoutHandler() {
-//                    @Override
-//                    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-//                        System.out.println("退出");
-//                    }
-//                });
     }
 }

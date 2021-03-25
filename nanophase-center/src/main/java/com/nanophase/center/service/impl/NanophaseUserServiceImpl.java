@@ -136,7 +136,6 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
 
                 // 保存用户登录异常的信息
                 if (null != exception) {
-                    // TODO: 2021/3/23 DB未增加字段 后期增加
                     nanophaseUserLog.setEMessage(exception.getMessage());
                     nanophaseUserLog.setLoginStatus(1);
                 }
@@ -171,7 +170,7 @@ public class NanophaseUserServiceImpl extends ServiceImpl<NanophaseUserMapper, N
     @Override
     public NanophaseUserDTO selectUserByName(String username) {
         NanophaseUser nanophaseUser = this.getOne(new QueryWrapper<NanophaseUser>().eq("user_email", username)
-                .eq("user_deleted", 0).select("user_password", "user_status"));
+                .eq("user_deleted", 0).select("user_password", "user_status","user_email","user_id"));
         if (null != nanophaseUser) {
             NanophaseUserDTO nanophaseUserDTO = new NanophaseUserDTO();
             nanophaseUserDTO.setUserPassword(nanophaseUser.getUserPassword());
