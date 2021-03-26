@@ -3,35 +3,127 @@ package com.nanophase.algorithm.sort;
 
 import com.nanophase.algorithm.common.SortUtil;
 
+import java.util.Arrays;
+
 /**
  * @author zhj
- * @since 2021-03-24
  * @apiNote 基本排序算法-快速排序 不稳定
  * 空间复杂度 O(log(n))
  * 时间复杂度 O(n*log(n))
  * 核心思想 随机取数组一个位置的值作为一个基点，一次排序以基点为准，大于该值的放在右边，小于该值的放在左边
  * 递归循环此过程完成排序
- * 一次排序的过程
- * 1，存在一个不为空的数据，随机选中一个基点，假设这里选中了最后一个数为基点;int point = arr[arr.length - 1]
- * 2, 从两边开始遍历 int left = 0; int right = arr.length - 1;
- * 3, left开始向前遍历，如果arr[left] > point; swap arr[left],arr[right]
- * 4, right向左边遍历，如果arr[right] < point; swap arr[left],arr[right]
+ * @since 2021-03-24
  */
 public class quickSort {
 
     public static void main(String[] args) {
-        int[] randomArray = SortUtil.getRandomArray(10);
-        SortUtil.print(randomArray);
-        System.out.println();
-        System.out.println("===================================");
-        sort(randomArray);
+        // create random array
+//        int[] randomArray = SortUtil.getRandomArray(10000);
+//        int[] arr = new int[randomArray.length];
+//        System.arraycopy(randomArray,0,arr,0,randomArray.length);
+//        sort(randomArray);
+//        // 使用对数器校验排序是否合格
+//        System.out.println(SortUtil.verifyArray(arr, randomArray));
+
+        int[] arr = SortUtil.getRandomArray(10);
+        sort(arr);
+        SortUtil.print(arr);
     }
 
-    // TODO: 2021/3/25 一次排序 默认按照从小到大排序
     public static void sort(int[] arr) {
+        if (arr.length <= 1) {
+            return;
+        }
+//        sort3(arr, 0, arr.length - 1);
+        sort(arr, 0, arr.length - 1);
+    }
+
+    /**
+     * 百度版
+     * @param arr
+     * @param left
+     * @param right
+     */
+    public static void sort3(int[] arr, int left, int right) {
+        if (left > right) {
+            return;
+        }
+        int i = left;
+        int j = right;
+        int pivot = arr[right];
+        while (i < j) {
+            while (i < j && arr[i] < pivot) {
+                i++;
+            }
+            while (i < j && arr[j] > pivot) {
+                j--;
+            }
+            if (arr[i] == arr[j] && i < j) {
+                i++;
+            } else {
+                SortUtil.swap(arr, i, j);
+            }
+        }
+        if (i - 1 > left) sort3(arr, left, i - 1);
+        if (j + 1 < right) sort3(arr, j + 1, right);
+    }
+
+    /**
+     * quickSort写法不一，这是一种写法 // TODO: 2021/3/26 有bug
+     *
+     * @param arr   要排序的数组
+     * @param left  左指针
+     * @param right 右指针
+     * @return
+     */
+    public static void sort(int[] arr, int left, int right) {
+        if (left < right) {
+            return;
+        }
+        // 基点值
+        int pivot = arr[right];
+        // 左指针
+        int i = left;
+        // 右指针
+        int j = right - 1;
+
+        while (i < j) {
+            // 左指针递增 找到最近的大于基点的值的位置
+            while (i < j && arr[i] <= pivot) {
+                i++;
+            }
+            // 右指针递减 找到最近的小于等于基点的值的位置
+            while (i < j && arr[j] > pivot) {
+                j--;
+            }
+            if (i != j) {
+                // 将找到的大小值进行交换
+                SortUtil.swap(arr, i, j);
+            }
+        }
+        // 最后 交换基点的值
+        if (j != 0 && arr[j] > pivot) {
+            SortUtil.swap(arr, j, right);
+        }
+        sort(arr, left, i - 1);
+        sort(arr, i + 1, right);
+    }
+
+    // 一次排序示例 将小于基点的值放左边 反之右边
+    public static void sort1(int[] arr) {
         int[] sortArray = new int[arr.length];
-        // 1，数据源；2，起始位置；3，目标数组；4，截止位置
+        // 拷贝数组；入参:1，数据源；2，起始位置；3，目标数组；4，截止位置
+        // quickSort的空间损耗不应该创建新数组;该操作不计入算法的空间损耗 只是为了和Arrays.sort(arr)的结果进行比较
         System.arraycopy(arr, 0, sortArray, 0, arr.length);
+//        sortArray = new int[]{2, 5, 3, 7, 10, 6, 8, 0, 4, 0, 1, 9, 11, 2, 0, 2};//5<==>4,7<==>4,10,j条件不成立
+//        中间的交换逻辑
+//        2, 5, 3, 7, 10, 6, 8, 0, 4, 0, 1, 9, 11, 2, 0, 2 初始数组 基点值 = 2；right值 = 0
+//        2, 0, 3, 7, 10, 6, 8, 0, 4, 0, 1, 9, 11, 2, 5, 2 第一次交换
+//        2, 0, 2, 7, 10, 6, 8, 0, 4, 0, 1, 9, 11, 3, 5, 2 第二次交换
+//        2, 0, 2, 1, 10, 6, 8, 0, 4, 0, 7, 9, 11, 3, 5, 2 第三次交换
+//        2, 0, 2, 1, 0, 6, 8, 0, 4, 10, 7, 9, 11, 3, 5, 2 第四次交换
+//        2, 0, 2, 1, 0, 0, 8, 6, 4, 10, 7, 9, 11, 3, 5, 2 第五次交换
+//        2, 0, 2, 1, 0, 0, 2, 6, 4, 10, 7, 9, 11, 3, 5, 8 最终结果
 
         // 双指针校验，头尾遍历
         // 获取基点，小于该基点的值放左边，反之右边
@@ -39,34 +131,56 @@ public class quickSort {
         int point = sortArray[pointSite];
         // 左指针
         int left = 0;
-        // 右指针
-        int right = sortArray.length - 1;
-        // TODO: 2021/3/25 先只考虑偶数情况
+        // 右指针 由于选中的基点为最右边的数 可以从arr[arr.length - 1 - 1]开始递减
+        int right = pointSite - 1;
         while (left < right) {
 
             // 使用if判断会有问题 需要while循环找到索引位置 然后跳出while循环进行位置交换
             // arr[0] = 1000 > 20 ;0 > arr[20],10 < arr[20]; 0 <==> 10,
-            while (left < right && sortArray[left] < point) {
+            // 如果左值小于等于基点 则一直右移，直到找到大于基点的值所在的位置；=时可以不移动
+            while (left < right && sortArray[left] <= point) {
                 left++;
             }
+            // 如果右值大于基点，则一直左移，直到找到小于基点的值所在的位置
             while (left < right && sortArray[right] > point) {
                 right--;
             }
-            SortUtil.swap(sortArray,left,right);
-            SortUtil.swap(sortArray,right,pointSite);
-            // 左边的大于基点
-//            if (sortArray[left] > point) {
-//                sortUtil.swap(sortArray,left,pointSite);
-//                pointSite = left;
-//            }
-//            if (sortArray[right] < point) {
-//                // 这样交换只是i和j交换 没有起到排到point之后的作用
-//                sortUtil.swap(sortArray,right,pointSite);
-//                pointSite = right;
-//            }
-//            left++;
-//            right--;
+            // left == right时 双指针指在了同一个位置，可以不做交换(该判断不影响整体算法性能，只是逻辑需要，不加也可)
+            if (left != right) {
+                SortUtil.swap(sortArray, left, right);
+                System.out.println("交换结果");
+                SortUtil.print(sortArray);
+            }
         }
+        if (sortArray[right] > point) {
+            SortUtil.swap(sortArray, right, pointSite);
+        }
+        System.out.println("最终结果");
         SortUtil.print(sortArray);
+    }
+
+    // TODO: 2021/3/26 这个算法排序不准确
+    public static int sort2(int[] arr, int left, int right) {
+        int point = arr[right];//基点的值
+        int i = left;//左开始处
+        int j = right;//右开始处
+        int k = right;//基点的位置可能会改变 记录基点的索引位置
+        //先将小于等于基	点的值放在左边，反之右边
+        while (i < j) {
+//            i走过的路j无需重复走
+            while (i < j && arr[i] <= point) {
+                i++;//找到了大于基点的 索引位置
+            }
+//            i走过的路j无需重复走
+            while (i < j && arr[j] > point) {
+                j--;//找到了小于基点的 索引位置
+            }
+            //交换位置
+            SortUtil.swap(arr, i, j);
+            SortUtil.swap(arr, j, k);
+            k = j;
+        }
+        SortUtil.print(arr);
+        return i;
     }
 }

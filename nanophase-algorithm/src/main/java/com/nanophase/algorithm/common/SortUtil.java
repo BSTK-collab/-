@@ -34,13 +34,24 @@ public class SortUtil {
      * @return
      */
     public static boolean verifyArray(int[] arr, int[] sortArr) {
+        boolean flag = true;
         Arrays.sort(arr);
         for (int i = 0; i < arr.length; i++) {
             if (arr[i] != sortArr[i]) {
-                return false;
+                System.out.println("正确值：" + arr[i]);
+                System.out.println("错误值：" + sortArr[i]);
+                flag = false;
             }
         }
-        return true;
+        if (!flag) {
+            System.out.println("错误的排序：");
+            print(sortArr);
+            System.out.println();
+            System.out.println("=====================================");
+            System.out.println("正确的排序：");
+            print(arr);
+        }
+        return flag;
 //        try {
 //            Method sort = clazz.getMethod("sort", int[].class);
 //            int[] arr = {1, 2, 3};
