@@ -35,8 +35,8 @@ public class NanophaseRoleController {
      * @param nanophaseRoleDTO
      * @return R
      */
-    @WebLog
     @ReadDB
+    @WebLog(value = "分页查询role业务")
     @PostMapping("/page")
     public R getRolePage(@RequestBody NanophaseRoleDTO nanophaseRoleDTO) {
         return iNanophaseRoleService.getRolePage(nanophaseRoleDTO);
@@ -49,9 +49,35 @@ public class NanophaseRoleController {
      * @return R
      */
     @WriteDB
-    @WebLog
+    @WebLog("批量新增角色业务")
     @PostMapping("/insert")
     public R insertBatchRole(@RequestBody List<NanophaseRoleDTO> roleDTOS) {
         return iNanophaseRoleService.insertBatchRole(roleDTOS);
+    }
+
+    /**
+     * 批量删除角色
+     *
+     * @param roleDTOS
+     * @return
+     */
+    @WriteDB
+    @WebLog(value = "批量删除角色业务（逻辑删除）")
+    @PostMapping("/delete")
+    public R deleteBatchRole(@RequestBody List<NanophaseRoleDTO> roleDTOS) {
+        return iNanophaseRoleService.deleteBatchRole(roleDTOS);
+    }
+
+    /**
+     * update
+     *
+     * @param nanophaseRoleDTO
+     * @return
+     */
+    @WriteDB
+    @WebLog(value = "修改role信息")
+    @PostMapping("/update")
+    public R updateRole(@RequestBody NanophaseRoleDTO nanophaseRoleDTO) {
+        return iNanophaseRoleService.updateRole(nanophaseRoleDTO);
     }
 }

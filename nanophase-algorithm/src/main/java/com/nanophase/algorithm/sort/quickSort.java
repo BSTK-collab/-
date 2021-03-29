@@ -27,15 +27,22 @@ public class quickSort {
 
         int[] arr = SortUtil.getRandomArray(10);
         sort(arr);
-        SortUtil.print(arr);
+//        SortUtil.print(arr);
     }
 
     public static void sort(int[] arr) {
         if (arr.length <= 1) {
             return;
         }
+//        System.out.println("排序前的数组");
+//        SortUtil.print(arr);
+//        System.out.println();
 //        sort3(arr, 0, arr.length - 1);
+        arr = new int[]{1614873282, 2068072312, -655861042, -863478095, -2077691062, -1424334473, 1898156318, -1195214949, -1497631752, -1269145485};
         sort(arr, 0, arr.length - 1);
+//        sort1(arr);
+        System.out.println("排序后的数组");
+        SortUtil.print(arr);
     }
 
     /**
@@ -77,11 +84,12 @@ public class quickSort {
      * @return
      */
     public static void sort(int[] arr, int left, int right) {
-        if (left < right) {
+        if (left >= right || right - left == 1) {
             return;
         }
         // 基点值
         int pivot = arr[right];
+        System.out.println("基点值" + pivot);
         // 左指针
         int i = left;
         // 右指针
@@ -100,13 +108,14 @@ public class quickSort {
                 // 将找到的大小值进行交换
                 SortUtil.swap(arr, i, j);
             }
+            System.out.println("i>>>>" + i + ";j----->" + j);
         }
         // 最后 交换基点的值
-        if (j != 0 && arr[j] > pivot) {
+        if (j >= 0 && arr[j] > pivot) {
             SortUtil.swap(arr, j, right);
         }
         sort(arr, left, i - 1);
-        sort(arr, i + 1, right);
+        sort(arr, i, right);
     }
 
     // 一次排序示例 将小于基点的值放左边 反之右边
@@ -115,7 +124,7 @@ public class quickSort {
         // 拷贝数组；入参:1，数据源；2，起始位置；3，目标数组；4，截止位置
         // quickSort的空间损耗不应该创建新数组;该操作不计入算法的空间损耗 只是为了和Arrays.sort(arr)的结果进行比较
         System.arraycopy(arr, 0, sortArray, 0, arr.length);
-//        sortArray = new int[]{2, 5, 3, 7, 10, 6, 8, 0, 4, 0, 1, 9, 11, 2, 0, 2};//5<==>4,7<==>4,10,j条件不成立
+        sortArray = new int[]{-325978909, -1090165760, -673624493, -1537328321, -1082194256, -355563631, -1683773164, 2143272252, 1737262753, 1095592451};//5<==>4,7<==>4,10,j条件不成立
 //        中间的交换逻辑
 //        2, 5, 3, 7, 10, 6, 8, 0, 4, 0, 1, 9, 11, 2, 0, 2 初始数组 基点值 = 2；right值 = 0
 //        2, 0, 3, 7, 10, 6, 8, 0, 4, 0, 1, 9, 11, 2, 5, 2 第一次交换

@@ -45,7 +45,7 @@ public class NanophaseRoleMenu implements Serializable {
     /**
      * 逻辑删除（0：未删除；1：已删除）
      */
-    private Boolean nanophaseDeleted;
+    private Integer nanophaseDeleted;
 
     @TableField(value = "create_user",fill = FieldFill.INSERT)
     private String createUser;

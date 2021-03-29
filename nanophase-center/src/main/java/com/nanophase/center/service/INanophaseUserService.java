@@ -31,6 +31,7 @@ public interface INanophaseUserService extends IService<NanophaseUser> {
      * @param nanophaseUserDTO
      * @return R
      */
+    @Deprecated
     R login(NanophaseUserDTO nanophaseUserDTO, HttpServletRequest request);
 
     /**
@@ -48,4 +49,20 @@ public interface INanophaseUserService extends IService<NanophaseUser> {
      * @return R
      */
     R getUserPage(NanophaseUserDTO nanophaseUserDTO);
+
+    /**
+     * 修改用户信息
+     *
+     * @param userDTO
+     * @return
+     */
+    R updateUser(NanophaseUserDTO userDTO);
+
+    /**
+     * 解禁用户 或者 禁用用户
+     *
+     * @param userDTO
+     * @return
+     */
+    R updateUserStatus(NanophaseUserDTO userDTO);
 }

@@ -32,4 +32,20 @@ public interface INanophaseRoleService extends IService<NanophaseRole> {
      * @return R
      */
     R insertBatchRole(List<NanophaseRoleDTO> roleDTOS);
+
+    /**
+     * 批量删除角色
+     *
+     * @param roleDTOS
+     * @return
+     */
+    R deleteBatchRole(List<NanophaseRoleDTO> roleDTOS);
+
+    /**
+     * update
+     *
+     * @param nanophaseRoleDTO
+     * @return
+     */
+    R updateRole(NanophaseRoleDTO nanophaseRoleDTO);
 }

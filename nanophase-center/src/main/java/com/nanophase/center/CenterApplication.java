@@ -18,8 +18,7 @@ import org.springframework.context.annotation.ComponentScan;
 public class CenterApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(CenterApplication.class, args);
-        String name = applicationContext.getEnvironment().getProperty("user.username");
-        String age = applicationContext.getEnvironment().getProperty("user.age");
-        System.out.println("name:"+name + ",age:" + age);
+        String name = applicationContext.getEnvironment().getProperty("user.log");
+        System.out.println("name:"+name);
     }
 }

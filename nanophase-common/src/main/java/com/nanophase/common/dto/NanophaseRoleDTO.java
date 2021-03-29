@@ -40,4 +40,9 @@ public class NanophaseRoleDTO extends PageDTO {
      * 是否删除（0，未删除；1：已删除）
      */
     private Integer roleDelete;
+
+    /**
+     * role_user中间表主键
+     */
+    private Long roleUserId;
 }

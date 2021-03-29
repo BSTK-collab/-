@@ -35,6 +35,8 @@ public class SecurityUser implements UserDetails {
      */
     private Collection<GrantedAuthority> nanophaseAuthorities;
 
+    public SecurityUser(){}
+
     public SecurityUser(NanophaseUserDTO userDTO) {
         this.userId = userDTO.getUserId();
         this.userStatus = userDTO.getUserStatus();

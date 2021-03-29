@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/security")
+@RequestMapping("/auth")
 public class SecurityController {
 
     /**

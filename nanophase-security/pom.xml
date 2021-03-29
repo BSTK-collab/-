@@ -42,11 +42,11 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <!--远程调用-->
-        <dependency>
-            <groupId>com.nanophase</groupId>
-            <artifactId>nanophase-feign</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.nanophase</groupId>-->
+<!--            <artifactId>nanophase-feign</artifactId>-->
+<!--            <version>0.0.1-SNAPSHOT</version>-->
+<!--        </dependency>-->
         <!--图形验证码 防机器暴力破解-->
         <!-- https://mvnrepository.com/artifact/com.github.penggle/kaptcha -->
         <dependency>

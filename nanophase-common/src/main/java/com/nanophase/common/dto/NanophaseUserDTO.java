@@ -82,5 +82,5 @@ public class NanophaseUserDTO extends PageDTO {
     /**
      * 用户的权限信息
      */
-    private List<String> roles;
+    private List<NanophaseRoleDTO> roles;
 }

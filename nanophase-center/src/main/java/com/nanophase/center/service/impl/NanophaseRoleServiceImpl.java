@@ -4,15 +4,20 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nanophase.center.entity.NanophaseRole;
+import com.nanophase.center.entity.NanophaseRoleMenu;
+import com.nanophase.center.entity.NanophaseUserRole;
 import com.nanophase.center.mapper.NanophaseRoleMapper;
+import com.nanophase.center.service.INanophaseRoleMenuService;
 import com.nanophase.center.service.INanophaseRoleService;
+import com.nanophase.center.service.INanophaseUserRoleService;
 import com.nanophase.center.warper.RoleWarper;
 import com.nanophase.common.dto.NanophaseRoleDTO;
 import com.nanophase.common.handler.NanophaseException;
 import com.nanophase.common.util.R;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +33,11 @@ import java.util.stream.Collectors;
  */
 @Service
 public class NanophaseRoleServiceImpl extends ServiceImpl<NanophaseRoleMapper, NanophaseRole> implements INanophaseRoleService {
+
+    @Autowired
+    private INanophaseUserRoleService iNanophaseUserRoleService;
+    @Autowired
+    private INanophaseRoleMenuService iNanophaseRoleMenuService;
 
     /**
      * 分页查询角色信息
@@ -66,7 +76,6 @@ public class NanophaseRoleServiceImpl extends ServiceImpl<NanophaseRoleMapper, N
      */
     @Override
     public R insertBatchRole(List<NanophaseRoleDTO> roleDTOS) {
-        // TODO: 2021/3/18 关于role code的校验与应用
         verifyInsertRoleParam(roleDTOS);
         List<NanophaseRole> roles = new ArrayList<>();
         for (NanophaseRoleDTO roleDTO : roleDTOS) {
@@ -87,6 +96,124 @@ public class NanophaseRoleServiceImpl extends ServiceImpl<NanophaseRoleMapper, N
     }
 
     /**
+     * 批量删除角色
+     *
+     * @param roleDTOS
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public R deleteBatchRole(List<NanophaseRoleDTO> roleDTOS) {
+        List<Long> roleIds = roleDTOS.stream().map(NanophaseRoleDTO::getRoleId).collect(Collectors.toList());
+        if (roleIds.size() == 0) {
+            return R.error("参数异常");
+        }
+        List<NanophaseRole> roles = new ArrayList<>(roleIds.size());
+        for (Long roleId : roleIds) {
+            NanophaseRole nanophaseRole = new NanophaseRole();
+            nanophaseRole.setRoleId(roleId);
+            nanophaseRole.setRoleDelete(1);
+            roles.add(nanophaseRole);
+        }
+        boolean b = this.updateBatchById(roles);
+        if (!b) {
+            throw new NanophaseException("role批量删除异常");
+        }
+        // 更新user role中间表
+        List<NanophaseUserRole> nanophaseUserRoles = iNanophaseUserRoleService.list(new QueryWrapper<NanophaseUserRole>()
+                .eq("nanophase_deleted", 0).in("nanophase_role_id", roleIds));
+        if (null != nanophaseUserRoles && nanophaseUserRoles.size() > 0) {
+            nanophaseUserRoles.forEach(s -> s.setNanophaseDeleted(1));
+            boolean b1 = iNanophaseUserRoleService.updateBatchById(nanophaseUserRoles);
+            if (!b1) {
+                throw new NanophaseException("role批量删除业务：更新user_role异常");
+            }
+        }
+        // 更新menu role中间表
+        List<NanophaseRoleMenu> nanophaseRoleMenus = iNanophaseRoleMenuService.list(new QueryWrapper<NanophaseRoleMenu>()
+                .eq("nanophase_deleted", 0).in("nanophase_role_id", roleIds));
+        if (null == nanophaseRoleMenus || nanophaseRoleMenus.size() == 0) {
+            // 没有相关连的菜单
+            return R.success();
+        }
+        nanophaseRoleMenus.forEach(s -> s.setNanophaseDeleted(1));
+        boolean b1 = iNanophaseRoleMenuService.updateBatchById(nanophaseRoleMenus);
+        if (!b1) {
+            throw new NanophaseException("role批量删除业务：更新menu_role失败");
+        }
+        return R.success();
+    }
+
+    /**
+     * update
+     *
+     * @param nanophaseRoleDTO
+     * @return
+     */
+    @Override
+    public R updateRole(NanophaseRoleDTO nanophaseRoleDTO) {
+        verifyUpdateRoleParam(nanophaseRoleDTO);
+        Long roleId = nanophaseRoleDTO.getRoleId();
+        NanophaseRole nanophaseRole = this.getById(roleId);
+        if (null == nanophaseRole) {
+            throw new NanophaseException("该角色不存在");
+        }
+        Integer roleStatus = nanophaseRoleDTO.getRoleStatus();
+        if (roleStatus == null || roleStatus.equals(nanophaseRole.getRoleStatus())) {
+            return R.success().put("data",this.updateById(nanophaseRole));
+        }
+        // 角色状态被置为了禁用 或者解除了禁用状态
+        // 逻辑删除关联的中间表数据
+        List<NanophaseUserRole> nanophaseUserRoles = iNanophaseUserRoleService.list(new QueryWrapper<NanophaseUserRole>()
+                .eq("nanophase_deleted", 0).eq("nanophase_role_id", roleId));
+        if (null != nanophaseUserRoles && nanophaseUserRoles.size() > 0) {
+            // 更新user_role中间表
+            nanophaseUserRoles.forEach(s -> s.setNanophaseDeleted(1));
+            boolean b1 = iNanophaseUserRoleService.updateBatchById(nanophaseUserRoles);
+            if (!b1) {
+                throw new NanophaseException("role更新业务：更新user_role异常");
+            }
+        }
+        // 更新menu_role中间表
+        List<NanophaseRoleMenu> nanophaseRoleMenus = iNanophaseRoleMenuService.list(new QueryWrapper<NanophaseRoleMenu>()
+                .eq("nanophase_deleted", 0).eq("nanophase_role_id", roleId));
+        if (null == nanophaseRoleMenus || nanophaseRoleMenus.size() == 0) {
+            // 没有相关连的菜单
+            return R.success();
+        }
+        nanophaseRoleMenus.forEach(s -> s.setNanophaseDeleted(1));
+        boolean b1 = iNanophaseRoleMenuService.updateBatchById(nanophaseRoleMenus);
+        if (!b1) {
+            throw new NanophaseException("role更新业务：更新menu_role失败");
+        }
+        return R.success();
+    }
+
+    /**
+     * 校验修改的参数是否合法
+     *
+     * @param nanophaseRoleDTO
+     */
+    private void verifyUpdateRoleParam(NanophaseRoleDTO nanophaseRoleDTO) {
+        Long roleId = nanophaseRoleDTO.getRoleId();
+        String roleName = nanophaseRoleDTO.getRoleName();
+        String roleCode = nanophaseRoleDTO.getRoleCode();
+        if (StringUtils.isBlank(roleName) || StringUtils.isBlank(roleCode) || null == roleId) {
+            throw new NanophaseException("参数异常");
+        }
+        List<NanophaseRole> list = this.list(new QueryWrapper<NanophaseRole>()
+                .eq("role_delete", 0).eq("role_name", roleName).ne("role_id",roleId));
+        if (null != list && list.size() > 0) {
+            throw new NanophaseException("Role name already exist");
+        }
+        list = list(new QueryWrapper<NanophaseRole>().eq("role_delete", 0)
+                .eq("role_code", roleCode).ne("role_id",roleId));
+        if (null != list && list.size() > 0) {
+            throw new NanophaseException("Role code already exist");
+        }
+    }
+
+    /**
      * 校验新增的角色信息是否合法
      *
      * @param roleDTOS 校验参数
@@ -95,9 +222,21 @@ public class NanophaseRoleServiceImpl extends ServiceImpl<NanophaseRoleMapper, N
         if (null != roleDTOS && roleDTOS.size() > 0) {
             // 角色名称不能重复
             List<String> roleNames = roleDTOS.stream().map(NanophaseRoleDTO::getRoleName).collect(Collectors.toList());
+            if (roleNames.size() == 0) {
+                throw new NanophaseException("参数异常");
+            }
             List<NanophaseRole> list = this.list(new QueryWrapper<NanophaseRole>().eq("role_delete", 0).in("role_name", roleNames));
             if (null != list && list.size() > 0) {
                 throw new NanophaseException("Role name already exists");
+            }
+            // 角色编码不能重复 todo 2次DB io
+            roleNames = roleDTOS.stream().map(NanophaseRoleDTO::getRoleCode).collect(Collectors.toList());
+            if (roleNames.size() == 0) {
+                throw new NanophaseException("参数异常");
+            }
+            List<NanophaseRole> list1 = this.list(new QueryWrapper<NanophaseRole>().eq("role_delete", 0).in("role_code", roleNames));
+            if (null != list1 && list1.size() > 0) {
+                throw new NanophaseException("Role code already exists");
             }
         }
     }

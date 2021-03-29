@@ -48,5 +48,5 @@ public class NanophaseUserRole implements Serializable {
      * 是否删除（0：未删除；1：已删除）
      */
     @TableField("nanophase_deleted")
-    private Boolean nanophaseDeleted;
+    private Integer nanophaseDeleted;
 }

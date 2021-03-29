@@ -8,6 +8,7 @@ import com.nanophase.common.annotation.ReadDB;
 import com.nanophase.common.annotation.WriteDB;
 import com.nanophase.common.util.R;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,14 +42,16 @@ public class NanophaseUserController {
 
     /**
      * 用户登录 Token方式
+     * TODO: 2021/3/29 已废弃 使用了spring-security内置的登录接口
      *
      * @param nanophaseUserDTO
      * @return R
      */
+    @Deprecated
     @ReadDB
     @PostMapping("/login")
     public R login(@RequestBody NanophaseUserDTO nanophaseUserDTO, HttpServletRequest request) {
-        return iNanophaseUserService.login(nanophaseUserDTO,request);
+        return iNanophaseUserService.login(nanophaseUserDTO, request);
     }
 
     /**
@@ -74,5 +77,32 @@ public class NanophaseUserController {
     @PostMapping("/page")
     public R getUserPage(@RequestBody NanophaseUserDTO nanophaseUserDTO) {
         return iNanophaseUserService.getUserPage(nanophaseUserDTO);
+    }
+
+    /**
+     * 修改用户信息
+     *
+     * @param userDTO
+     * @return
+     */
+    @WriteDB
+    @WebLog(value = "修改用户信息")
+    @PostMapping("/update")
+    public R updateUser(@RequestBody NanophaseUserDTO userDTO) {
+        return iNanophaseUserService.updateUser(userDTO);
+    }
+
+    /**
+     * 解禁用户 或者 禁用用户
+     *
+     * @param userDTO
+     * @return
+     */
+//    @PreAuthorize("hasAnyAuthority('admin')")
+    @WriteDB
+    @WebLog(value = "解禁用户或禁用用户")
+    @PostMapping("/updateUserStatus")
+    public R updateUserStatus(@RequestBody NanophaseUserDTO userDTO) {
+        return iNanophaseUserService.updateUserStatus(userDTO);
     }
 }

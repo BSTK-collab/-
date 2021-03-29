@@ -1,5 +1,6 @@
 package com.nanophase.feign.center;
 
+import com.nanophase.common.dto.NanophaseSystemLogDTO;
 import com.nanophase.common.dto.NanophaseUserDTO;
 import com.nanophase.common.dto.NanophaseUserLogDTO;
 import com.nanophase.common.util.R;
@@ -32,4 +33,7 @@ public interface CenterApi {
      */
     @RequestMapping(method = RequestMethod.POST, value = "/nanophase-user-log/insert")
     void insertUserLoginInfo(NanophaseUserLogDTO userLogDTO);
+
+    @RequestMapping(method = RequestMethod.DELETE.POST,value = "nanophase-system-log/insert")
+    void insertSystemLog(NanophaseSystemLogDTO nanophaseSystemLogDTO);
 }

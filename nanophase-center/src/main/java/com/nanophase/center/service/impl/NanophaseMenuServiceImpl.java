@@ -64,16 +64,29 @@ public class NanophaseMenuServiceImpl extends ServiceImpl<NanophaseMenuMapper, N
             // 菜单名称不能为空
             for (NanophaseMenuDTO menuDTO : menuDTOS) {
                 if (StringUtils.isBlank(menuDTO.getMenuName())) {
-                    throw new NanophaseException("Menu name cannot be empty, menu name:" + menuDTO.getMenuName());
+                    throw new NanophaseException("Menu name cannot be empty");
                 }
-                if (isUpdate && null == menuDTO.getMenuId()) {
-                    // 修改操作时 主键不能为空
-                    throw new NanophaseException("Menu id cannot be empty");
+                if (isUpdate) {
+                    Integer menuId = menuDTO.getMenuId();
+                    if (null == menuDTO.getMenuId()) {
+                        // 修改操作时 主键不能为空
+                        throw new NanophaseException("Menu id cannot be empty");
+                    }
+                    NanophaseMenu nanophaseMenu = this.getById(menuId);
+                    if (null == nanophaseMenu) {
+                        throw new NanophaseException("菜单不存在");
+                    }
+                    // TODO: 2021/3/29 修改菜单时 应限制数量
+                    NanophaseMenu menu = this.getOne(new QueryWrapper<NanophaseMenu>().eq("menu_deleted", 0)
+                            .eq("menu_name", menuDTO.getMenuName()));
+                    if (null != menu && !menu.getMenuId().equals(menuId)) {
+                        throw new NanophaseException("Menu name already exist");
+                    }
                 }
                 menuNames.add(menuDTO.getMenuName());
             }
             List<NanophaseMenu> list = this.list(new QueryWrapper<NanophaseMenu>().eq("menu_deleted", 0).in("menu_name", menuNames));
-            if (null != list && list.size() > 0) {
+            if (null != list && list.size() > 0 && !isUpdate) {
                 throw new NanophaseException("Menu name already exist");
             }
         }
