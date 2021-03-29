@@ -26,11 +26,11 @@ public class quickSort {
 //        System.out.println(SortUtil.verifyArray(arr, randomArray));
 
         int[] arr = SortUtil.getRandomArray(10);
-        sort(arr);
+        Tsort(arr,0,arr.length - 1);
 //        SortUtil.print(arr);
     }
 
-    public static void sort(int[] arr) {
+    public static void Tsort(int[] arr, int left,int right) {
         if (arr.length <= 1) {
             return;
         }
@@ -38,8 +38,12 @@ public class quickSort {
 //        SortUtil.print(arr);
 //        System.out.println();
 //        sort3(arr, 0, arr.length - 1);
-        arr = new int[]{1614873282, 2068072312, -655861042, -863478095, -2077691062, -1424334473, 1898156318, -1195214949, -1497631752, -1269145485};
-        sort(arr, 0, arr.length - 1);
+//        arr = new int[]{1614873282, 2068072312, -655861042, -863478095, -2077691062, -1424334473, 1898156318, -1195214949, -1497631752, -1269145485};
+        if (left <= right) {
+            int sort = sort(arr, 0, arr.length - 1);
+            sort(arr,left,sort - 1);
+            sort(arr,sort + 1,right);
+        }
 //        sort1(arr);
         System.out.println("排序后的数组");
         SortUtil.print(arr);
@@ -83,10 +87,10 @@ public class quickSort {
      * @param right 右指针
      * @return
      */
-    public static void sort(int[] arr, int left, int right) {
-        if (left >= right || right - left == 1) {
-            return;
-        }
+    public static int sort(int[] arr, int left, int right) {
+//        if (left >= right || right - left == 1) {
+//            return;
+//        }
         // 基点值
         int pivot = arr[right];
         System.out.println("基点值" + pivot);
@@ -104,7 +108,7 @@ public class quickSort {
             while (i < j && arr[j] > pivot) {
                 j--;
             }
-            if (i != j) {
+            if (i < j) {
                 // 将找到的大小值进行交换
                 SortUtil.swap(arr, i, j);
             }
@@ -114,8 +118,9 @@ public class quickSort {
         if (j >= 0 && arr[j] > pivot) {
             SortUtil.swap(arr, j, right);
         }
-        sort(arr, left, i - 1);
-        sort(arr, i, right);
+        return i;
+//        sort(arr, left, i - 1);
+//        sort(arr, i, right);
     }
 
     // 一次排序示例 将小于基点的值放左边 反之右边
