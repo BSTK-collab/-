@@ -3,7 +3,6 @@ package com.nanophase.security.service;
 import com.nanophase.common.dto.NanophaseUserDTO;
 import com.nanophase.common.constant.CenterConstant;
 import com.nanophase.common.enums.ErrorCodeEnum;
-import com.nanophase.feign.center.CenterApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;

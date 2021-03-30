@@ -2,8 +2,8 @@ package com.nanophase.common.aspect;
 
 import com.nanophase.common.annotation.WebLog;
 import com.nanophase.common.dto.NanophaseSystemLogDTO;
+import com.nanophase.common.feign.center.CenterApi;
 import com.nanophase.common.manager.AsyncManager;
-import com.nanophase.feign.center.CenterApi;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -68,6 +68,12 @@ public class WebLogAspect {
                 nanophaseSystemLogDTO.setRequestParam(requestParam);
                 // 任务名称
                 nanophaseSystemLogDTO.setSystemLogName(taskName);
+                // 请求方式
+                nanophaseSystemLogDTO.setRequestType(null);
+                // 请求地址
+                nanophaseSystemLogDTO.setRequestUrl(null);
+                // 操作模块
+                nanophaseSystemLogDTO.setSystemLogGroup(null);
                 centerApi.insertSystemLog(nanophaseSystemLogDTO);
             },null);
         }catch (Exception e){

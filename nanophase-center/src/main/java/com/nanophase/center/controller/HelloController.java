@@ -5,9 +5,9 @@ import com.nanophase.center.service.HelloService;
 import com.nanophase.common.annotation.ReadDB;
 import com.nanophase.common.annotation.WebLog;
 import com.nanophase.common.annotation.WriteDB;
+import com.nanophase.common.feign.security.SecurityApi;
 import com.nanophase.common.util.NetworkUtil;
 import com.nanophase.common.util.R;
-import com.nanophase.feign.security.SecurityApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

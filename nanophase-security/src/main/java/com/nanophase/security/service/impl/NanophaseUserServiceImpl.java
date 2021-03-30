@@ -1,8 +1,8 @@
 package com.nanophase.security.service.impl;
 
 import com.nanophase.common.dto.NanophaseUserDTO;
+import com.nanophase.common.feign.center.CenterApi;
 import com.nanophase.common.handler.NanophaseException;
-import com.nanophase.feign.center.CenterApi;
 import com.nanophase.security.entity.SecurityUser;
 import com.nanophase.security.service.NanophaseUserService;
 import org.springframework.beans.factory.annotation.Autowired;

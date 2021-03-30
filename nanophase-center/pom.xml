@@ -45,11 +45,6 @@
             <artifactId>sentinel-transport-simple-http</artifactId>
             <version>1.8.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.nanophase</groupId>
-            <artifactId>nanophase-feign</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>

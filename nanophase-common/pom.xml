@@ -71,9 +71,8 @@
         </dependency>
         <!--远程调用API-->
         <dependency>
-            <groupId>com.nanophase</groupId>
-            <artifactId>nanophase-feign</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
         <!--spring-security依赖-->
 <!--        <dependency>-->

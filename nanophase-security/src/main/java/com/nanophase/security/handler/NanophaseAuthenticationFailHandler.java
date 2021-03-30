@@ -1,9 +1,9 @@
 package com.nanophase.security.handler;
 
 import com.nanophase.common.dto.NanophaseUserLogDTO;
+import com.nanophase.common.feign.center.CenterApi;
 import com.nanophase.common.manager.AsyncManager;
 import com.nanophase.common.util.NetworkUtil;
-import com.nanophase.feign.center.CenterApi;
 import com.nanophase.security.entity.SecurityUser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
