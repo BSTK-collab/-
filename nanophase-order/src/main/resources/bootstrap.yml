@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: nanophase-order
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        # 远程拉取nacos 配置文件的尾缀 默认文件名nanophase-order
+        file-extension: yml
