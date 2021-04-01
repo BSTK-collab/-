@@ -1,9 +1,6 @@
 package com.nanophase.center.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -22,6 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@TableName("nanophase_role_menu")
 public class NanophaseRoleMenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,7 +38,7 @@ public class NanophaseRoleMenu implements Serializable {
     /**
      * 菜单ID
      */
-    private Long nanophaseMenuId;
+    private Integer nanophaseMenuId;
 
     /**
      * 逻辑删除（0：未删除；1：已删除）
