@@ -75,7 +75,7 @@ public class WebLogAspect {
                 // 操作模块
                 nanophaseSystemLogDTO.setSystemLogGroup(null);
                 centerApi.insertSystemLog(nanophaseSystemLogDTO);
-            },null);
+            },4000);
         }catch (Exception e){
             e.printStackTrace();
         }

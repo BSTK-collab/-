@@ -4,7 +4,7 @@ import com.nanophase.algorithm.common.SortUtil;
 
 /**
  * @author zhj
- * @since 2021-03-31
+ * @date 2021-03-31
  * @apiNote 插入排序 稳定
  * {2, 1, 8, 4, 7, 6, 5} 初始化数组
  * {1, 2, 8, 4, 7, 6, 5} 第一次交换 1,2

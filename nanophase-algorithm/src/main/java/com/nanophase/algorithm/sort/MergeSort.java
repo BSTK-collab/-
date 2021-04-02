@@ -4,6 +4,7 @@ import com.nanophase.algorithm.common.SortUtil;
 
 /**
  * @author zhj
+ * @date  2021-03-30
  * @apiNote 归并排序
  * 时间复杂度 O(nlog(n))
  * 空间复杂度O(nlog(n))
@@ -11,7 +12,6 @@ import com.nanophase.algorithm.common.SortUtil;
  * 假定存在一个乱序数组，数组取半，左数组起始位置为i，右数组起始位置为j
  * 左数组递归排序 右数组递归排序，最后合并
  * 创建一个相同大小的新数组
- * @since 2021-03-30
  */
 public class MergeSort {
     public static void main(String[] args) {

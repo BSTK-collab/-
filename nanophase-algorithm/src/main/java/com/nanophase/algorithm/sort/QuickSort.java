@@ -3,18 +3,16 @@ package com.nanophase.algorithm.sort;
 
 import com.nanophase.algorithm.common.SortUtil;
 
-import java.util.Arrays;
-
 /**
  * @author zhj
+ * @date 2021-03-24
  * @apiNote 基本排序算法-快速排序 不稳定
  * 空间复杂度 O(log(n))
  * 时间复杂度 O(n*log(n))
  * 核心思想 随机取数组一个位置的值作为一个基点，一次排序以基点为准，大于该值的放在右边，小于该值的放在左边
  * 递归循环此过程完成排序
- * @since 2021-03-24
  */
-public class quickSort {
+public class QuickSort {
 
     public static void main(String[] args) {
         // create random array
