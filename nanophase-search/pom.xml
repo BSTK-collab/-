@@ -39,7 +39,7 @@
             <artifactId>nanophase-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <!--spring集成elasticsearch-->
+        <!--spring集成elasticsearch 默认版本7.6.2-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
