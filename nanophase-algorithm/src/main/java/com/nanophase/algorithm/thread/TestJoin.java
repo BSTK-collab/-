@@ -24,9 +24,11 @@ public class TestJoin {
         thread1.start();
 
         /*
-         * 如果不加入join方法主线程会直接执行完毕 流程为
+         * 如果不加入join方法主线程会直接执行完毕，不会等待子线程 流程为
          * main is run
          * Thread[main,5,main] is end
+         * begin run Thread-0
+         * end run Thread-0
          *
          * 如果使用join方法，主线程会等待子线程30s后才会继续执行。在这期间，主线程的状态为timed-waiting
          * 执行流程
@@ -35,7 +37,7 @@ public class TestJoin {
          * end run Thread-0
          * Thread[main,5,main] is end
          * */
-        thread1.join();
+//        thread1.join();
         System.out.println(Thread.currentThread() + " is end"); // Thread[main,5,main] is end
     }
 }
