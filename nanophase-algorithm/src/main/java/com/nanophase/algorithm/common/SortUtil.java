@@ -84,7 +84,7 @@ public class SortUtil {
         Random random = new Random();
         int[] arr = new int[length];
         for (int i = 0; i < arr.length; i++) {
-            arr[i] = random.nextInt();
+            arr[i] = random.nextInt(10);
         }
         return arr;
     }
@@ -93,12 +93,37 @@ public class SortUtil {
      * 交换位置
      *
      * @param arr 数组
-     * @param i 位置
-     * @param j 位置
+     * @param i   位置
+     * @param j   位置
      */
     public static void swap(int[] arr, int i, int j) {
         int temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
+    }
+
+    /**
+     * 返回数组的最大值和最小值
+     *
+     * @param arr   取值的数组
+     * @param left  取值范围-左指针
+     * @param right 取值范围-右指针
+     * @return 返回数组结构，0为最大值索引位置；1为最小值索引位置
+     */
+    public static int[] findMaxAndMinValue(int[] arr, int left, int right) {
+        if (arr.length < 2 || right - left < 2) {
+            return arr;
+        }
+        int minVal = arr[left];
+        int maxVal = arr[left];
+        for (int k = left + 1; k < right; k++) {
+            if (arr[k] < minVal) {
+                minVal = arr[k];
+            }
+            if (arr[k] > maxVal) {
+                maxVal = arr[k];
+            }
+        }
+        return new int[]{maxVal, minVal};
     }
 }
