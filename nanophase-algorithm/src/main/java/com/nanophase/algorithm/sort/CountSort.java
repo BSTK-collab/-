@@ -17,7 +17,7 @@ import com.nanophase.algorithm.common.SortUtil;
 public class CountSort {
     public static void main(String[] args) {
         for (int i = 0; i < 1000; i++) {
-            int[] randomArray = SortUtil.getRandomArray(10);
+            int[] randomArray = SortUtil.getRandomArray(10000);
             int[] arr = new int[randomArray.length];
             System.arraycopy(randomArray, 0, arr, 0, arr.length);
             arr = sort(arr);
@@ -79,6 +79,7 @@ public class CountSort {
 
         // 将具体的值根据具体落点位置赋值给result数组
         for (int i = left; i < right; i++) {
+            // 在这里发生数组越界不会抛出异常
             result[--countArr[arr[i] - minValue]] = arr[i];
         }
         return result;

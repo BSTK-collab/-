@@ -9,6 +9,5 @@ package com.nanophase.algorithm.thread;
 public class TestYield {
 
     public static void main(String[] args) {
-
     }
 }
