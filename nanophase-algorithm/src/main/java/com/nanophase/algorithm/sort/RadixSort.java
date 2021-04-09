@@ -96,8 +96,8 @@ public class RadixSort {
         }
 
         // 排好序后写回原数组
-        for (int i = left; i < right; i++) {
-            arr[i] = result[i];
+        if (right - left >= 0){
+            System.arraycopy(result, left, arr, left, right - left);
         }
     }
 }
