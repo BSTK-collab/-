@@ -44,6 +44,10 @@ shard分片：
 2，每一个shard都是一个lucene实例
 3，ES会自动在节点上对shard做负载均衡
 4，一个document不会存在多个PShard上，但是可以存在多个RShard上[副本分片主要承受查询压力]
+ES的集群健康状态分为3中
+Green：所有的Primary和Replica均为可用
+Yellow：至少一个Replica不可用，但是所有的Primary均可用
+Red：至少一个Primary不可用
 
     
     
