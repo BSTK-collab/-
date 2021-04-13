@@ -15,3 +15,7 @@ spring:
     #126邮箱SMTP服务器地址:smtp.126.com,端口号:465或者994
     #163邮箱SMTP服务器地址:smtp.163.com,端口号:465或者994
     #yeah邮箱SMTP服务器地址:smtp.yeah.net,端口号:465或者994
+  servlet:
+    multipart:
+      max-file-size: 8MB #spring默认配置10MB 单个文件的大小
+      max-request-size: 8MB #spring默认10MB 总上传的数据大小
