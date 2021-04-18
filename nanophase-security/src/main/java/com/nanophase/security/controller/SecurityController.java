@@ -44,7 +44,7 @@ public class SecurityController {
      * @return
      */
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('admin')")
+//    @PreAuthorize("hasAnyAuthority('admin')")
     public String hello() {
         return "hello";
     }

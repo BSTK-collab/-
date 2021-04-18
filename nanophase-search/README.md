@@ -48,6 +48,18 @@ ES的集群健康状态分为3中
 Green：所有的Primary和Replica均为可用
 Yellow：至少一个Replica不可用，但是所有的Primary均可用
 Red：至少一个Primary不可用
+一些配置：
+1,voting：投票节点
+Node.voting_only = true
+作为选举master的投票节点，即便配置了node.master = true（候选节点）也不会参选
+2,coordinating:协调节点
+每一个节点都是隐士的协调节点（转发请求），如果同时配置了node.master = false和 node.data（数据节点） = false
+那么此节点仅成为协调节点
+node.master & node.data是E是的默认配置，既作为候选节点也是数据节点，但是在集群情况下，这样配置的节点
+一旦被选为了master，承受的压力是很大的，一般来讲master只作为集群的管理者，承担较为轻量的任务，
+比如创建删除索引，分片均衡等
+node.master = true,node.data = false;
+
 
     
     
