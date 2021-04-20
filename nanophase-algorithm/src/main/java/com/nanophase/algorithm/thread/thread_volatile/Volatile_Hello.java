@@ -5,6 +5,7 @@ package com.nanophase.algorithm.thread.thread_volatile;
  */
 public class Volatile_Hello {
     // 如果是修饰了引用类型，比如一个对象，那么修改了对象内部的值是不会触发可见性的，必须对象内部的值加入Volatile才可以
+    // volatile是线程的缓存之间互相保持通信，和内存的数据保持一致性 另一个功能是指令重排
     private static /*volatile*/ boolean running = true;
 
     public static void main(String[] args) throws InterruptedException {
