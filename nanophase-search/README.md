@@ -59,7 +59,55 @@ node.master & node.data是E是的默认配置，既作为候选节点也是数�
 一旦被选为了master，承受的压力是很大的，一般来讲master只作为集群的管理者，承担较为轻量的任务，
 比如创建删除索引，分片均衡等
 node.master = true,node.data = false;
-
+关于ES的mapping概念：
+不需要创建索引，可以直接往ES中put数据，就是因为ES的mapping机制，可以为不同的数据指定相应的mapping，
+mapping中包含了字段的类型，搜索方式、分词器等
+可以通过 GET/PRODUCT/_mapping获取详细信息
+{
+"product" : {
+"mappings" : {
+"properties" : {
+"desc" : {
+"type" : "text",
+"fields" : {
+"keyword" : {
+"type" : "keyword",
+"ignore_above" : 256
+}
+}
+},
+"doc" : {
+"properties" : {
+"price" : {
+"type" : "long"
+}
+}
+},
+"name" : {
+"type" : "text",
+"fields" : {
+"keyword" : {
+"type" : "keyword",
+"ignore_above" : 256
+}
+}
+},
+"price" : {
+"type" : "long"
+},
+"tags" : {
+"type" : "text",
+"fields" : {
+"keyword" : {
+"type" : "keyword",
+"ignore_above" : 256
+}
+}
+}
+}
+}
+}
+}
 
     
     

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/config")
-@RefreshScope
+@RefreshScope// 自动刷新Nacos配置
 public class ConfigController {
 
 //    @Value("${useLocalCache:false}")

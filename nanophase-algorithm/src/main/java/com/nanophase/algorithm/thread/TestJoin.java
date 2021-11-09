@@ -15,23 +15,13 @@ public class TestJoin {
         Thread thread1 = new Thread(() -> {
             System.out.println("begin run " + Thread.currentThread().getName()); // begin run Thread-0
             try {
-                Thread.sleep(20000L);
+                Thread.sleep(2000L);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             System.out.println("end run " + Thread.currentThread().getName()); // end run Thread-0
         });
-        Thread thread2 = new Thread(() -> {
-            System.out.println("begin run " + Thread.currentThread().getName());
-            try{
-                Thread.sleep(10000);
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-            System.out.println("end run " + Thread.currentThread().getName());
-        });
         thread1.start();
-        thread2.start();
         /*
          * 如果不加入join方法主线程会直接执行完毕，不会等待子线程 流程为
          * main is run
@@ -46,8 +36,7 @@ public class TestJoin {
          * end run Thread-0
          * Thread[main,5,main] is end
          * */
-        thread2.join();
-//        thread1.join();
+        thread1.join();
         System.out.println(Thread.currentThread() + " is end"); // Thread[main,5,main] is end
     }
 }
